@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ican <<ican@student.42.fr>>                +#+  +:+       +#+        */
+/*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 14:58:44 by teraslan          #+#    #+#             */
-/*   Updated: 2025/04/30 17:20:49 by ican             ###   ########.fr       */
+/*   Updated: 2025/04/30 17:41:42 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,7 @@ int main(int argc, char **argv ,char **envp)
 	while (1)
 	{
 		input = readline("minishell$ ");
+		command.tmp = &shell;
 		if (!input)
 		{
 			break;

@@ -18,6 +18,7 @@ typedef struct s_data
 typedef struct s_command {
     char *cmd;          // komut (örneğin, "echo")
     char **args;        // argümanlar (örneğin, ["Hello", "World"])
+	t_data *tmp;
     // Geri yönlendirme, pipe gibi başka alanlar eklenebilir.
 } t_command;
 
