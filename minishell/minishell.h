@@ -3,6 +3,8 @@
 
 #include <readline/readline.h>
 #include <stdlib.h>
+#include <signal.h>
+#include <unistd.h>
 
 typedef struct s_data
 {
