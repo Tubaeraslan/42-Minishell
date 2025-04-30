@@ -19,4 +19,7 @@ typedef struct s_command {
     // Geri yönlendirme, pipe gibi başka alanlar eklenebilir.
 } t_command;
 
+
+void parse_input(t_data *shell);
+
 #endif

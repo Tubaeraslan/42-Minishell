@@ -2,7 +2,7 @@ NAME = minishell
 CFLAGS = -Wall -Wextra -Werror
 LDFLAGS = -lreadline
 CC = cc
-SRC = main.c 
+SRC = main.c parser.c
 OBJ = $(SRC:.c=.o)
 
 all:$(NAME)

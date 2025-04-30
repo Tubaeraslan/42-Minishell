@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 14:58:44 by teraslan          #+#    #+#             */
-/*   Updated: 2025/04/30 16:46:47 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/04/30 17:15:33 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ int main(int argc, char **argv ,char **envp)
 {
 	char *input;
 	t_data shell;
+	t_command command;
 
 	rl_catch_signals = 0; 
 	shell.env = envp;
@@ -59,10 +60,10 @@ int main(int argc, char **argv ,char **envp)
 		printf("Kullanici: %s\n",shell.input);
 
 		//parser
-		//parse_input(&shell);
+		parse_input(&shell);
 
 		//execute
-		//execute_commands(&shell)
+		//execute_commands(&command)
 
 		free(input);
 		shell.input = NULL;
