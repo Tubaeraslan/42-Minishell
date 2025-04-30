@@ -1,6 +1,8 @@
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
+//git pull --no-rebase
+
 #include <readline/readline.h>
 #include <readline/history.h>
 #include <stdlib.h>
@@ -11,8 +13,6 @@ typedef struct s_data
 {
 	char *input;
 	char **env;
-	//deneme
-    //denenenenenenen
 }	t_data;
 
 typedef struct s_command {
