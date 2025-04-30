@@ -1,7 +1,7 @@
 NAME = minishell
 CFLAGS = -Wall -Wextra -Werror
 LDFLAGS = -lreadline
-
+CC = cc
 SRC = main.c 
 OBJ = $(SRC:.c=.o)
 
