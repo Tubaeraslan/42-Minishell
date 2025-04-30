@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 14:58:44 by teraslan          #+#    #+#             */
-/*   Updated: 2025/04/30 16:27:45 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/04/30 16:46:47 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ int main(int argc, char **argv ,char **envp)
 		else
 		{
 			//komutları tutmak için
-			//add_history(input);
+			add_history(input);
 		}
 		shell.input = input;
 		printf("Kullanici: %s\n",shell.input);
