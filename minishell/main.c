@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ican <<ican@student.42.fr>>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 14:58:44 by teraslan          #+#    #+#             */
-/*   Updated: 2025/04/30 17:15:33 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/04/30 17:20:49 by ican             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,8 @@ int main(int argc, char **argv ,char **envp)
 		parse_input(&shell);
 
 		//execute
-		//execute_commands(&command)
+		
+		execute_commands(&command);
 
 		free(input);
 		shell.input = NULL;
