@@ -12,6 +12,7 @@ typedef struct s_data
 	char *input;
 	char **env;
 	//deneme
+    //denenenenenenen
 }	t_data;
 
 typedef struct s_command {
