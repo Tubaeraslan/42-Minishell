@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <signal.h>
 #include <unistd.h>
+#include "libft/libft.h"
 
 typedef struct s_data
 {
@@ -24,5 +25,5 @@ typedef struct s_command {
 
 
 void parse_input(t_data *shell);
-
+void	execute_commands(t_data *command);
 #endif

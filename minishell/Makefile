@@ -2,13 +2,20 @@ NAME = minishell
 CFLAGS = -Wall -Wextra -Werror
 LDFLAGS = -lreadline
 CC = cc
+
+LIBFT_DIR = libft
+LIBFT = $(LIBFT_DIR)/libft.a
+
 SRC = main.c parser.c
 OBJ = $(SRC:.c=.o)
 
-all:$(NAME)
+all:$(LIBFT) $(NAME)
 
 $(NAME) : $(OBJ)
-	$(CC) $(OBJ) -o $(NAME) $(LDFLAGS)
+	$(CC) $(OBJ) -o $(NAME) $(LDFLAGS) $(LIBFT)
+
+$(LIBFT):
+	make -C $(LIBFT_DIR)
 
 clean:
 	rm -f $(OBJ)
