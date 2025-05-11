@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 17:11:11 by teraslan          #+#    #+#             */
-/*   Updated: 2025/05/05 17:56:01 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/05/11 12:32:04 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ int ends_with_pipe(char * input)
 	while (i >= 0 && input[i] == ' ')
 		i--;
 	if (i >= 0 && input[i] == '|')
-		return 0;
+		return 1;
 	return 0;
 }
 
@@ -84,40 +84,49 @@ int check_pipe(char *input)
 		}
 		i++;
 	}
-	if(ends_with_pipe(input) == 0)
+	if(ends_with_pipe(input) == 1)
 		return 0;
 	return 1;
 }
 
 int check_redirect(char *input)
 {
-	int i;
-	int count;
-	char c;
-	
-	i = 0;
-	count = 0;
+	int i = 0;
+	int single_flag = 0;
+	int double_flag = 0;
+
 	while (input[i])
 	{
-		if (input[i] == '<' || input[i] == '>')
+		if (input[i] == '\'' && double_flag == 0)
+			single_flag = !single_flag;
+		else if (input[i] == '\"' && single_flag == 0)
+			double_flag = !double_flag;
+
+		if (!single_flag && !double_flag)
 		{
-			count = 1;
-			c = input[i];
-			if (input[i+1] == c)
+			// 3 veya daha fazla yönlendirme karakteri kontrolü
+			if ((input[i] == '<' || input[i] == '>') &&
+				input[i] == input[i + 1] && input[i + 1] == input[i + 2])
 			{
-				count++;
-				i++;
-			}
-			if (input[i + 1] == c)
 				return 0;
-			i++;
-			while (input[i] == ' ')
-				i++;
-			if (input[i] == '\0' || input[i] == '|' || input[i] == '<' || input[i] == '>')
-				return 0;	
+			}
+
+			// tek < veya > sonunda kaldıysa
+			if ((input[i] == '<' || input[i] == '>') && input[i + 1] == '\0')
+				return 0;
+
+			// yönlendirme sonrası boşluk varsa ve sonra yine yönlendirme varsa
+			if ((input[i] == '<' || input[i] == '>') &&
+				(input[i + 1] == ' ' || input[i + 1] == '\0'))
+			{
+				int j = i + 1;
+				while (input[j] == ' ')
+					j++;
+				if (input[j] == '\0' || input[j] == '<' || input[j] == '>')
+					return 0;
+			}
 		}
-		else
-			i++;
+		i++;
 	}
 	return 1;
 }
@@ -131,6 +140,8 @@ void parse_input(t_data *shell)
 	//boşsa işlem yapma
 	if (!shell->input || shell->input[0] == '\0')
 		return;
+	
+	
 	//1) syntax kontrolü
 	/*
 	açık kalan tırnak - yanlış pipe - eksik komut
@@ -155,11 +166,9 @@ void parse_input(t_data *shell)
 	//2)tokenleri ayır (space, | , <, >, <<, >>)
 	/*
 		girdiyi karakter karakter işle
-		char **tokens = lexer(shell->input);
-		if(!tokens){
-			return;
-		}
 	*/
+
+	
 	//3)parse işlemi
 	/*
 		cmd_list = command_lst(tokens);
