@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 17:11:11 by teraslan          #+#    #+#             */
-/*   Updated: 2025/05/11 12:32:04 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/05/11 17:49:19 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,14 +131,14 @@ int check_redirect(char *input)
 	return 1;
 }
 
-void parse_input(t_data *shell)
+void parse_input(t_command *command)
 {
 	//t_command *command;
 	//t_command *cmd_lst;
 	//char **tokens;
 
 	//boşsa işlem yapma
-	if (!shell->input || shell->input[0] == '\0')
+	if (!command->tmp->input || command->tmp->input[0] == '\0')
 		return;
 	
 	
@@ -146,17 +146,17 @@ void parse_input(t_data *shell)
 	/*
 	açık kalan tırnak - yanlış pipe - eksik komut
 	*/
-	if (is_valid_syntax(shell->input) == 0)
+	if (is_valid_syntax(command->tmp->input) == 0)
 	{
 		printf("syntax error: unclosed quote\n");
 		return;
 	}
-	if (check_pipe(shell->input) == 0)
+	if (check_pipe(command->tmp->input) == 0)
 	{
 		printf("syntax error near unexpected token `|'\n");
 		return;
 	}
-	if(check_redirect(shell->input) == 0)
+	if(check_redirect(command->tmp->input) == 0)
 	{
 		printf("syntax error near unexpected token `newline'\n");
 		return;
@@ -168,11 +168,27 @@ void parse_input(t_data *shell)
 		girdiyi karakter karakter işle
 	*/
 
+	token(command);
+	int k = 0;
+	while (command->tokens && command->tokens[k])
+	{
+    	printf("Token[%d]: %s\n", k, command->tokens[k]);
+    	k++;
+	}
+
+	
+
 	
 	//3)parse işlemi
 	/*
 		cmd_list = command_lst(tokens);
 	*/
+
+	
+
+
+	
+	
 	//4)execute işlemi için kaydet
 	/*
 		shell->cmd = cmd_lst;

@@ -10,6 +10,8 @@
 #include <unistd.h>
 #include "libft/libft.h"
 
+
+
 typedef struct s_data
 {
 	char *input;
@@ -24,6 +26,8 @@ typedef struct s_command {
 } t_command;
 
 
-void parse_input(t_data *shell);
+void parse_input(t_command *s_command);
 void	execute_commands(t_data *command);
+void token(t_command *command);
+
 #endif

@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 14:58:44 by teraslan          #+#    #+#             */
-/*   Updated: 2025/05/05 14:29:45 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/05/11 15:03:31 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,10 @@ int main(int argc, char **argv ,char **envp)
 	t_data shell;
 	t_command command;
 
-	shell.env = envp;
+	command.tmp = &shell;
+	command.tmp->env = envp;
+	command.token_count = 0;
+	command.tokens = NULL;
 	(void)argc;
 	(void)argv;
 	
@@ -48,7 +51,6 @@ int main(int argc, char **argv ,char **envp)
 	while (1)
 	{
 		input = readline("minishell$ ");
-		command.tmp = &shell;
 		if (!input)
 		{
 			printf("exit\n");
@@ -59,18 +61,30 @@ int main(int argc, char **argv ,char **envp)
 			//komutları tutmak için
 			add_history(input);
 		}
-		shell.input = input;
-		printf("Kullanici: %s\n",shell.input);
+		command.tmp->input = input;
+		printf("Kullanici: %s\n",command.tmp->input);
 
 		//parser
-		parse_input(&shell);
+		parse_input(&command);
 
 		//execute
 		
 		//execute_commands(&command);
-
+		if (command.tokens)
+		{
+			int k;
+			k = 0;
+			while (command.tokens[k])
+			{
+				free(command.tokens[k]);
+				k++;
+			}
+			free(command.tokens);
+		}
+		command.tokens = NULL;
+		command.token_count = 0;
 		free(input);
-		shell.input = NULL;
+		command.tmp->input = NULL;
 	}
 
 	//struct free leri için
