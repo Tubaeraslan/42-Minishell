@@ -1,12 +1,12 @@
 NAME = minishell
 CFLAGS = -Wall -Wextra -Werror -g
-LDFLAGS = -lreadline
 CC = cc
+LDFLAGS = -lreadline
 
 LIBFT_DIR = libft
 LIBFT = $(LIBFT_DIR)/libft.a
 
-SRC = main.c parser.c token.c
+SRC = main.c parse_input.c syntax_check.c lexer.c parsing.c
 OBJ = $(SRC:.c=.o)
 
 all:$(LIBFT) $(NAME)

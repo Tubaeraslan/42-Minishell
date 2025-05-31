@@ -5,15 +5,31 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/30 14:58:44 by teraslan          #+#    #+#             */
-/*   Updated: 2025/05/11 15:03:31 by teraslan         ###   ########.fr       */
+/*   Created: 2025/05/31 13:06:40 by teraslan          #+#    #+#             */
+/*   Updated: 2025/05/31 17:54:59 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+void init_command(t_command *command,t_data *shell,char **envp)
+{
+	command->tmp = shell;
+	command->tmp->input = NULL;
+	command->tmp->env = envp;
+	command->token_count = 0;
+	command->tokens = NULL;
+	command->args = NULL;
+	command->is_pipe = 0;
+	command->next = NULL;
+	command->cmd = NULL;
+	command->redirects = NULL;
+	command->infile = NULL;
+	command->outfile = NULL;
+	command->is_append = 0;
+}
 
-void	sigint_handler(int sig)
+void sigint_handler(int sig)
 {
 	(void)sig;
 	write(2,"\n",1);
@@ -22,32 +38,24 @@ void	sigint_handler(int sig)
 	rl_redisplay();   //promptu ve satırı yeniden yaz
 }
 
-
-void	handle_signals()
+void handle_signals()
 {
 	//ctrl-c
-	signal(SIGINT ,sigint_handler);
-
-	// ctrl-\ '
-	signal(SIGQUIT, SIG_IGN);
+	signal(SIGINT, sigint_handler);
+	//ctrl-\'
+	signal(SIGQUIT,SIG_IGN);
 }
 
-int main(int argc, char **argv ,char **envp)
+int main(int argc, char **argv, char **envp)
 {
-	char *input;
-	t_data shell;
-	t_command command;
+	char	*input;
+	t_data	shell;
+	t_command	command;
 
-	command.tmp = &shell;
-	command.tmp->env = envp;
-	command.token_count = 0;
-	command.tokens = NULL;
 	(void)argc;
 	(void)argv;
-	
-	//ctrl-c  ctrk-\'
+	init_command(&command,&shell,envp);
 	handle_signals();
-	
 	while (1)
 	{
 		input = readline("minishell$ ");
@@ -57,38 +65,14 @@ int main(int argc, char **argv ,char **envp)
 			break;
 		}
 		else
-		{
-			//komutları tutmak için
 			add_history(input);
-		}
 		command.tmp->input = input;
+		//input kontrol
 		printf("Kullanici: %s\n",command.tmp->input);
 
-		//parser
+		//parse
 		parse_input(&command);
-
-		//execute
-		
-		//execute_commands(&command);
-		if (command.tokens)
-		{
-			int k;
-			k = 0;
-			while (command.tokens[k])
-			{
-				free(command.tokens[k]);
-				k++;
-			}
-			free(command.tokens);
-		}
-		command.tokens = NULL;
-		command.token_count = 0;
-		free(input);
-		command.tmp->input = NULL;
 	}
-
-	//struct free leri için
-	//clean_shell(&shell);
 	
 	return 0;
 }
