@@ -7,6 +7,9 @@
 #include <signal.h>
 #include <unistd.h>
 #include "libft/libft.h"
+#include <stdio.h>
+# include <fcntl.h>
+# include <sys/wait.h>
 
 typedef struct s_data
 {
@@ -42,6 +45,8 @@ typedef struct s_command
 	struct s_command	*next;  //pipelara bölünce bir sonraki komutu tutmak için
 	t_data *tmp;
 	int is_pipe;
+	int fd[2]; // 
+	pid_t pid;
 }	t_command;
 
 void parse_input(t_command *command);
