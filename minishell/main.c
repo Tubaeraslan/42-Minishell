@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 13:06:40 by teraslan          #+#    #+#             */
-/*   Updated: 2025/06/16 15:32:31 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/06/16 17:11:01 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ int main(int argc, char **argv, char **envp)
 
 		//parse
 		parse_input(&command);
-		//execute_commands(&command);
+		execute_commands(&command);
 	}
 	
 	return 0;

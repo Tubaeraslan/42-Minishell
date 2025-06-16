@@ -53,5 +53,8 @@ int check_pipe(char *input);
 int check_redirects(char *input);
 void token(t_command *command);
 void parsing(t_command *command);
+void	execute_commands(t_command *command);
+void ft_echo(t_command *cmd);
+void ft_pwd(t_command *cmd);
 
 #endif
