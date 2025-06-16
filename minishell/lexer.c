@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 14:00:48 by teraslan          #+#    #+#             */
-/*   Updated: 2025/05/31 16:29:17 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/06/16 16:41:05 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,39 +108,56 @@ void token(t_command *command)
 	char_quote = 0;
 	src = command->tmp->input;
 	while (src[i])
-	{
-		if (src[i] == '\'' || src[i] == '"')
-		{
-			if (!inside_quotes)
-			{
-				inside_quotes = 1;
-				char_quote = src[i];
-			}
-			else if(char_quote == src[i])
-			{
-				inside_quotes = 0;
-				char_quote = 0;
-			}
-		}
-		else if(!inside_quotes && (src[i] == ' ' || src[i] == '|'
-			|| src[i] == '<' || src[i] == '>')){
-			{
-				if (j > 0)
-				{
-					buffer[j] = '\0';
-					add_token(command, ft_strdup(buffer));
-					j = 0;
-				}
-				i += handle_operators(command,&src[i]);
-			}
-		}
-		else
-		{
-			buffer[j] = src[i];
-			j++;
-		}
-		i++;
-	}
+    {
+        if (src[i] == '\'' || src[i] == '"')
+        {
+            if (!inside_quotes)
+            {
+                inside_quotes = 1;
+                char_quote = src[i];
+                i++;
+            }
+            else if (char_quote == src[i])
+            {
+                inside_quotes = 0;
+                char_quote = 0;
+                i++;
+            }
+            else
+            {
+                buffer[j++] = src[i++];
+            }
+        }
+        else if (!inside_quotes && src[i] == ' ')
+        {
+            // Boşluk gördüğünde buffer'da token varsa ekle, boşluk token değil
+            if (j > 0)
+            {
+                buffer[j] = '\0';
+                add_token(command, ft_strdup(buffer));
+                j = 0;
+            }
+            i++;
+        }
+        else if (!inside_quotes && (src[i] == '>' || src[i] == '<' || src[i] == '|'))
+        {
+            // Önce varsa buffer'daki tokenı ekle
+            if (j > 0)
+            {
+                buffer[j] = '\0';
+                add_token(command, ft_strdup(buffer));
+                j = 0;
+            }
+            // Operatör tokenını ekle ve ilerle
+            int len = handle_operators(command, &src[i]);
+            i += len;
+        }
+        else
+        {
+            // Normal karakter, token'a ekle
+            buffer[j++] = src[i++];
+        }
+    }
 	if (j > 0)
 	{
 		buffer[j] = '\0';

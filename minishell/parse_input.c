@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 13:23:51 by teraslan          #+#    #+#             */
-/*   Updated: 2025/05/31 19:41:05 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/06/16 15:34:03 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,8 @@ void parse_input(t_command *command)
 	//parse kontrol
 	// İlk komutu yazdır
 	int i;
+	t_command *tmp;
+	tmp = command;
 
     while (command)
     {
@@ -97,6 +99,11 @@ void parse_input(t_command *command)
 
         // Sonraki komuta geç
         command = command->next;
+	}
+	while (tmp)
+	{
+    	printf("tmp->cmd = %s\n", tmp->cmd ? tmp->cmd : "(null)");
+    	tmp = tmp->next;
 	}
 
 }
