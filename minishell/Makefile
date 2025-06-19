@@ -25,4 +25,14 @@ fclean: clean
 
 re: fclean all
 
+leaks: 
+	@echo "Running Walgring..."
+	@valgrind --leak-check=full		\
+			--show-leak-kinds=all	\
+			--track-origins=yes		\
+			--track-fds=yes			\
+			--verbose				\
+			--suppressions=valgrind.supp	\
+			./$(NAME)
+
 .PHONY: all clean fclean re
