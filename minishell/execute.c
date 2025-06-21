@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ican <<ican@student.42.fr>>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/02 11:09:19 by ican              #+#    #+#             */
-/*   Updated: 2025/06/16 19:18:22 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/06/21 15:55:28 by ican             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,10 +46,10 @@ void	execute_built(t_command *cmd)
 	// 	ft_export(cmd);
 	// else if (ft_strncmp(cmd->cmd, "unset", 6) == 0)
 	// 	ft_unset(cmd);
-	// else if (ft_strncmp(cmd->cmd, "env", 4) == 0)
-	// 	ft_env(cmd);
-	// else if (ft_strncmp(cmd->cmd, "exit", 5) == 0)
-	// 	ft_exit(cmd);
+	else if (ft_strncmp(cmd->cmd, "env", 4) == 0)
+		ft_env(cmd);
+	else if (ft_strncmp(cmd->cmd, "exit", 5) == 0)
+	 	ft_exit(cmd);
 }
 
 char	*path_finder(char *cmd, char **env)
