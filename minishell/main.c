@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 13:06:40 by teraslan          #+#    #+#             */
-/*   Updated: 2025/06/16 17:11:01 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/06/22 15:19:29 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ void init_command(t_command *command,t_data *shell,char **envp)
 {
 	command->tmp = shell;
 	command->tmp->input = NULL;
-	command->tmp->env = envp;
+	command->tmp->env = ft_env_dup(envp);
 	command->token_count = 0;
 	command->tokens = NULL;
 	command->args = NULL;
@@ -27,6 +27,7 @@ void init_command(t_command *command,t_data *shell,char **envp)
 	command->infile = NULL;
 	command->outfile = NULL;
 	command->is_append = 0;
+	command->last_exit_code = 0;
 }
 
 void sigint_handler(int sig)

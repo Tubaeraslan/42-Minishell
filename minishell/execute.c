@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ican <<ican@student.42.fr>>                +#+  +:+       +#+        */
+/*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/02 11:09:19 by ican              #+#    #+#             */
-/*   Updated: 2025/06/21 15:55:28 by ican             ###   ########.fr       */
+/*   Updated: 2025/06/22 16:05:35 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,22 +34,37 @@ int	is_built(char *arg)
 }
 
 //run built-in
-void	execute_built(t_command *cmd)
+void execute_built(t_command *cmd)
 {
-	if (ft_strncmp(cmd->cmd, "echo", 5) == 0)
-	 	ft_echo(cmd);
-	// else if (ft_strncmp(cmd->cmd, "cd", 3) == 0)
-	// 	ft_cd(cmd);
-	else if (ft_strncmp(cmd->cmd, "pwd", 4) == 0)
-	 	ft_pwd(cmd);
-	// else if (ft_strncmp(cmd->cmd, "export", 7) == 0)
-	// 	ft_export(cmd);
-	// else if (ft_strncmp(cmd->cmd, "unset", 6) == 0)
-	// 	ft_unset(cmd);
-	else if (ft_strncmp(cmd->cmd, "env", 4) == 0)
-		ft_env(cmd);
-	else if (ft_strncmp(cmd->cmd, "exit", 5) == 0)
-	 	ft_exit(cmd);
+    if (ft_strncmp(cmd->cmd, "echo", 5) == 0)
+    {
+        ft_echo(cmd);
+        cmd->last_exit_code = 0;
+    }
+    else if (ft_strncmp(cmd->cmd, "pwd", 4) == 0)
+    {
+        ft_pwd();
+        cmd->last_exit_code = 0;
+    }
+    else if (ft_strncmp(cmd->cmd, "env", 4) == 0)
+    {
+        ft_env(cmd);
+        cmd->last_exit_code = 0;
+    }
+    else if (ft_strncmp(cmd->cmd, "exit", 5) == 0)
+    {
+        cmd->last_exit_code = ft_exit(cmd);
+    }
+	else if (ft_strncmp(cmd->cmd, "export", 7) == 0)
+    {
+        ft_export(cmd);
+		cmd->last_exit_code = 0;
+    }
+	else if (ft_strncmp(cmd->cmd, "unset", 6) == 0)
+    {
+        ft_unset(cmd);
+		cmd->last_exit_code = 0;
+    }
 }
 
 char	*path_finder(char *cmd, char **env)

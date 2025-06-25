@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   built-in.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ican <<ican@student.42.fr>>                +#+  +:+       +#+        */
+/*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 18:44:16 by teraslan          #+#    #+#             */
-/*   Updated: 2025/06/21 17:55:19 by ican             ###   ########.fr       */
+/*   Updated: 2025/06/22 17:05:19 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,12 +36,13 @@ void ft_echo(t_command *cmd)
 	
 }
 
-void ft_cd(t_command *cmd)
-{
+//chdir ile çalışma dizinini değiştir
+// void ft_cd(t_command *cmd)
+// {
 	
-}
+// }
 
-void ft_pwd(t_command *cmd)
+void ft_pwd()
 {
 	char *cwd;
 
@@ -55,61 +56,99 @@ void ft_pwd(t_command *cmd)
 		perror("pwd error");
 }
 
+//shell değişkenini ortam değişkeni haline getir
+//export a env de gözükür 
+
 void ft_export(t_command *cmd)
 {
+	 int i;
+
+	 i = 1;
+	 if (!cmd->args[i]) //declare ile env yi listele
+	 {
+		print_env_sorted(cmd->tmp->env);
+		return;
+	 }
+	 while (cmd->args[i])
+	 {
+		if (!is_valid(cmd->args[i]))
+		{
+			ft_putstr_fd("minishell: export: `", 2);
+			ft_putstr_fd(cmd->args[i], 2);
+			ft_putstr_fd("': not a valid identifier\n", 2);
+		}
+		else
+		{
+			update_env(&cmd->tmp->env, cmd->args[i]); // A=42 veya sadece A
+		}
+		i++;
+	 }
 	 
 }
 
+//envden silmek
 void ft_unset(t_command *cmd)
 {
-	
+	int i = 1;
+
+	while (cmd->args[i])
+	{
+		if (is_valid(cmd->args[i])) // kontrol koyman iyi olur
+			cmd->tmp->env = remove_from_env(cmd->tmp->env, cmd->args[i]);
+		else
+		{
+			ft_putstr_fd("minishell: unset: `", 2);
+			ft_putstr_fd(cmd->args[i], 2);
+			ft_putstr_fd("': not a valid identifier\n", 2);
+		}
+		i++;
+	}
 }
 
 void ft_env(t_command *cmd)
 {
 	int	i;
 	int	j;
-	
+
 	i = 0;
-	j = 0;
-	if (cmd->args[1])
+	while (cmd->tmp->env[i] != NULL)
 	{
-		ft_putstr_fd(cmd->tmp->env,1);
-	}
-	while (cmd->tmp->env[i] != '\0')
-	{
+		j = 0;
 		while (cmd->tmp->env[i][j] != '\0')
 		{
-			write(1,&cmd->tmp->env[i][j],1);
+			write(1, &cmd->tmp->env[i][j], 1);
 			j++;
 		}
+		write(1, "\n", 1);
 		i++;
 	}
 }
 
-void ft_exit(t_command *cmd)
+int	ft_exit(t_command *cmd)
 {
-	int	i;
+	write(2, "exit\n", 5);
 
-	i = 0;
-	write(2,"exit\n",5);
-	while(i <= 0)
+	// Birden fazla argüman varsa, shell kapanmasın ama kod 1 dönsün
+	if (cmd->args[1] && cmd->args[2])
 	{
-		if (cmd->args[1] && cmd->args[2])
-		{
-				ft_putstr_fd("minishell: exit: too many arguments",STDERR_FILENO);
-				i++;
-		}
-		if (cmd->args[1] && 1 == numeric_control(cmd->args[1]))
-		{
-			write(2, "minishell: exit: ", 18);
-			ft_putstr_fd(cmd->args[1], 2);
-			write(2, ": numeric argument required", 28);
-			exit_program(cmd, -1);
-		}
-		else if(cmd->args[1])
-			exit_program(cmd, ft_atol(cmd->args[1]));//
-		else
-			exit_program(cmd, 0);	
+		ft_putstr_fd("minishell: exit: too many arguments\n", STDERR_FILENO);
+		return (1); // Shell devam eder, exit() çağrılmaz
 	}
+
+	// Argüman sayı değilse, shell 255 ile kapanmalı
+	if (cmd->args[1] && numeric_control(cmd->args[1]) == 1)
+	{
+		ft_putstr_fd("minishell: exit: ", STDERR_FILENO);
+		ft_putstr_fd(cmd->args[1], STDERR_FILENO);
+		ft_putstr_fd(": numeric argument required\n", STDERR_FILENO);
+		exit_program(cmd, 255);
+	}
+
+	// Geçerli sayısal argüman varsa
+	else if (cmd->args[1])
+		exit_program(cmd, ft_atoi(cmd->args[1]));
+	else
+		exit_program(cmd, 0);
+
+	return (0); // Exit çağrıldıktan sonra burası çalışmaz ama syntax için
 }

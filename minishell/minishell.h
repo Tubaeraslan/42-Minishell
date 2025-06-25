@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ican <<ican@student.42.fr>>                +#+  +:+       +#+        */
+/*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/21 17:40:25 by ican              #+#    #+#             */
-/*   Updated: 2025/06/21 17:52:42 by ican             ###   ########.fr       */
+/*   Updated: 2025/06/22 15:57:47 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ typedef struct s_command
 	struct s_command	*next;  //pipelara bölünce bir sonraki komutu tutmak için
 	t_data *tmp;
 	int is_pipe;
-	int exit_code;
+	int last_exit_code;
 }	t_command;
 
 void parse_input(t_command *command);
@@ -68,12 +68,20 @@ void token(t_command *command);
 void parsing(t_command *command);
 void	execute_commands(t_command *command);
 void ft_echo(t_command *cmd);
-void ft_pwd(t_command *cmd);
-void ft_exit(t_command *cmd);
+void ft_pwd();
+int ft_exit(t_command *cmd);
 void ft_env(t_command *cmd);
+void ft_export(t_command *cmd);
+void ft_unset(t_command *cmd);
 
 int numeric_control(char *arg);
 void exit_program(t_command *cmd, int exit_code);
+void update_env(char ***envp, char *arg);
+int is_valid(char *str);
+void print_env_sorted(char **envp);
+char **add_to_env(char **env, char *new_var);
+char **ft_env_dup(char **envp);
+char	**remove_from_env(char **env, const char *var);
 
 //free
 void free_two_dimension(char **arg);
