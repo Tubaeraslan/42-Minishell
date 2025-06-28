@@ -1,0 +1,17 @@
+total 120
+-rw-r--r-- 1 teraslan 2024_istanbul  1505 Haz 22 16:02 all_free_st.c
+-rw-r--r-- 1 teraslan 2024_istanbul  3871 Haz 28 15:18 built-in.c
+-rw-r--r-- 1 teraslan 2024_istanbul  3977 Haz 22 15:55 built-in_utils_2.c
+-rw-r--r-- 1 teraslan 2024_istanbul  2219 Haz 22 16:06 built-in_utils.c
+-rw-r--r-- 1 teraslan 2024_istanbul  4176 Haz 28 15:38 execute.c
+-rw-r--r-- 1 teraslan 2024_istanbul     0 Haz 28 15:39 file.txt
+-rw-r--r-- 1 teraslan 2024_istanbul  4065 Haz 21 18:03 lexer.c
+drwxr-xr-x 2 teraslan 2024_istanbul  4096 Haz 21 18:03 libft
+-rw-r--r-- 1 teraslan 2024_istanbul  2181 Haz 22 15:19 main.c
+-rw-r--r-- 1 teraslan 2024_istanbul   704 Haz 22 14:52 Makefile
+-rwxr-xr-x 1 teraslan 2024_istanbul 54616 Haz 28 15:39 minishell
+-rw-r--r-- 1 teraslan 2024_istanbul  2807 Haz 28 15:12 minishell.h
+-rw-r--r-- 1 teraslan 2024_istanbul  4692 Haz 28 13:55 parse_input.c
+-rw-r--r-- 1 teraslan 2024_istanbul  3499 Haz 21 18:03 parsing.c
+-rw-r--r-- 1 teraslan 2024_istanbul  3037 Haz 22 19:26 syntax_check.c
+-rw-r--r-- 1 teraslan 2024_istanbul   190 Haz 21 18:03 valgrind.supp

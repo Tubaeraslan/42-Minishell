@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/02 11:09:19 by ican              #+#    #+#             */
-/*   Updated: 2025/06/28 15:12:16 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/06/28 15:38:27 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,29 +109,56 @@ void	execute_a_token(t_command *command)
 	pid_t	pid;
 	char	*path;
 	int		status;
-	
+	int		fd;
+
 	if (!command || !command->cmd)
-		return ; 
+		return ;
+
 	if (is_built(command->cmd) == 1)
 	{
 		execute_built(command);
 		return ;
 	}
+
 	pid = fork();
-	printf("%d\n",pid);
-	//fork hatası
 	if (pid == -1)
 	{
 		perror("fork");
-		exit(-1);
+		exit(EXIT_FAILURE);
 	}
-
-	//child process
-	else if (pid == 0)
+	else if (pid == 0) // child process
 	{
-		printf("%d\n",pid);
-		path = path_finder(command->cmd,command->tmp->env); //komutun path değişkeninindeki yerini bul
-		//no path ifff
+		// 🔄 INFILE redirect
+		if (command->infile)
+		{
+			fd = open(command->infile, O_RDONLY);
+			if (fd < 0)
+			{
+				perror("open infile");
+				exit(EXIT_FAILURE);
+			}
+			dup2(fd, STDIN_FILENO);
+			close(fd);
+		}
+
+		// 🔄 OUTFILE redirect
+		if (command->outfile)
+		{
+			if (command->is_append)
+				fd = open(command->outfile, O_WRONLY | O_CREAT | O_APPEND, 0644);
+			else
+				fd = open(command->outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+
+			if (fd < 0)
+			{
+				perror("open outfile");
+				exit(EXIT_FAILURE);
+			}
+			dup2(fd, STDOUT_FILENO);
+			close(fd);
+		}
+
+		path = path_finder(command->cmd, command->tmp->env);
 		if (!path)
 		{
 			ft_putstr_fd("command not found: ", 2);
@@ -139,18 +166,14 @@ void	execute_a_token(t_command *command)
 			ft_putchar_fd('\n', 2);
 			exit(127);
 		}
-		execve(path,command->args,command->tmp->env);
+		execve(path, command->args, command->tmp->env);
 		perror("execve");
-		exit(-1);
+		exit(EXIT_FAILURE);
 	}
-	
-	//parent process
-	else
-	{
-		printf("%d\n",pid);
+	else // parent process
 		waitpid(pid, &status, 0);
-	}
 }
+
 
 
 void	execute_commands(t_command *command)
