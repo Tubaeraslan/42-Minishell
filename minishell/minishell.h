@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/21 17:40:25 by ican              #+#    #+#             */
-/*   Updated: 2025/06/28 15:43:27 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/06/28 17:53:24 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,9 @@ typedef struct s_command
 	t_redirects *redirects;
 	struct s_command	*next;  //pipelara bölünce bir sonraki komutu tutmak için
 	t_data *tmp;
+	char *heredoc_limiter;
+	int is_heredoc;
+	int heredoc_fd;
 	int is_pipe;
 	int last_exit_code;
 }	t_command;

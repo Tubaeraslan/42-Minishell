@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 16:42:35 by teraslan          #+#    #+#             */
-/*   Updated: 2025/05/31 19:55:58 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/06/28 17:53:36 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,14 @@ static void clear_command_data(t_command *cmd)
 		free(cmd->outfile);
 		cmd->outfile = NULL;
 	}
+	if (cmd->heredoc_limiter)
+    {
+        free(cmd->heredoc_limiter);
+        cmd->heredoc_limiter = NULL;
+    }
 	cmd->is_pipe = 0;
+	cmd->heredoc_fd = 0;
+	cmd->is_heredoc = 0;
 	cmd->is_append = 0;
 	cmd->next = NULL; 
 }
@@ -57,7 +64,11 @@ void parsing(t_command *command)
 	tmp_args = malloc(sizeof(char *) * (command->token_count + 1));
 	if (!tmp_args)
 		return;
-
+	if (command->heredoc_limiter)
+	{
+		free(command->heredoc_limiter);
+		command->heredoc_limiter = NULL;
+	}
 	while (i < command->token_count)
 	{
 		tmp_token = command->tokens[i];
@@ -82,6 +93,23 @@ void parsing(t_command *command)
 				free(command->outfile);
 			command->outfile = ft_strdup(command->tokens[i + 1]);
 			command->is_append = 0;
+			i += 2;
+		}
+		else if (ft_strncmp(tmp_token, "<<", 3) == 0 && command->tokens[i + 1])
+		{
+			// heredoc limiter'i heredoc_limiter değişkenine kopyalayın
+			if (command->heredoc_limiter)
+				free(command->heredoc_limiter);
+			command->heredoc_limiter = ft_strdup(command->tokens[i + 1]);
+
+			// infile kesinlikle NULL bırakın, çünkü heredoc için infile kullanılmaz
+			if (command->infile)
+			{
+				free(command->infile);
+				command->infile = NULL;
+			}
+
+			command->is_heredoc = 1;
 			i += 2;
 		}
 		else if (ft_strncmp(tmp_token, "|", 2) == 0)
