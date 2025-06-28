@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/02 11:09:19 by ican              #+#    #+#             */
-/*   Updated: 2025/06/22 16:05:35 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/06/28 15:12:16 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,11 @@ void execute_built(t_command *cmd)
 	else if (ft_strncmp(cmd->cmd, "unset", 6) == 0)
     {
         ft_unset(cmd);
+		cmd->last_exit_code = 0;
+    }
+	else if (ft_strncmp(cmd->cmd, "cd", 3) == 0)
+    {
+        ft_cd(cmd);
 		cmd->last_exit_code = 0;
     }
 }

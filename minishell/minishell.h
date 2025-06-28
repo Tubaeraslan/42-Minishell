@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/21 17:40:25 by ican              #+#    #+#             */
-/*   Updated: 2025/06/22 15:57:47 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/06/28 15:12:34 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,7 @@ int ft_exit(t_command *cmd);
 void ft_env(t_command *cmd);
 void ft_export(t_command *cmd);
 void ft_unset(t_command *cmd);
+void ft_cd(t_command *cmd);
 
 int numeric_control(char *arg);
 void exit_program(t_command *cmd, int exit_code);

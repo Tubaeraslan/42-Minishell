@@ -6,11 +6,79 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 13:23:51 by teraslan          #+#    #+#             */
-/*   Updated: 2025/06/22 17:43:15 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/06/28 13:55:01 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+char *get_env_value(char **env, char *key)
+{
+	int i = 0;
+	size_t key_len = ft_strlen(key);
+
+	while (env[i])
+	{
+		if (ft_strncmp(env[i], key, key_len) == 0 && env[i][key_len] == '=')
+			return env[i] + key_len + 1; // '=' den sonrası value
+		i++;
+	}
+	return NULL;
+}
+
+
+void expand_variables(t_command *command)
+{
+	char *input = command->tmp->input;
+	char *new_input = malloc(4096); // buffer yeterli olmalı
+	int i = 0, j = 0;
+	int in_single_quote = 0;
+	int in_double_quote = 0;
+
+	while (input[i])
+	{
+		if (input[i] == '\'' && !in_double_quote)
+		{
+			in_single_quote = !in_single_quote;
+			new_input[j++] = input[i++];
+		}
+		else if (input[i] == '"' && !in_single_quote)
+		{
+			in_double_quote = !in_double_quote;
+			new_input[j++] = input[i++];
+		}
+		else if (input[i] == '$' && !in_single_quote)
+		{
+			i++;
+			char varname[256];
+			int k = 0;
+			while (input[i] && (isalnum(input[i]) || input[i] == '_'))
+				varname[k++] = input[i++];
+			varname[k] = '\0';
+
+			// ENV'den değeri al
+			char *value = get_env_value(command->tmp->env, varname);
+			if (value)
+			{
+				int m = 0;
+				while (value[m])
+					new_input[j++] = value[m++];
+			}
+		}
+		else
+		{
+			new_input[j++] = input[i++];
+		}
+	}
+	new_input[j] = '\0';
+
+	free(command->tmp->input);
+	command->tmp->input = ft_strdup(new_input); // libft içindeki strdup
+	free(new_input);
+
+	printf("Expanded input: %s\n", command->tmp->input);
+}
+
 
 void parse_input(t_command *command)
 {
@@ -33,6 +101,9 @@ void parse_input(t_command *command)
 		printf("syntax error near unexpected token `newline'\n");
 		return;
 	}
+
+	//$kontrolü
+	expand_variables(command);
 
 	//tokenları ayır(space, "" , |,redirect)
 	token(command);
