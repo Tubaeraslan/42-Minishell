@@ -6,7 +6,7 @@ LDFLAGS = -lreadline
 LIBFT_DIR = libft
 LIBFT = $(LIBFT_DIR)/libft.a
 
-SRC = main.c parse_input.c syntax_check.c lexer.c parsing.c execute.c built-in.c built-in_utils.c all_free_st.c built-in_utils_2.c
+SRC = main.c parse_input.c syntax_check.c lexer.c parsing.c execute.c built-in.c built-in_utils.c all_free_st.c built-in_utils_2.c execute_many.c
 OBJ = $(SRC:.c=.o)
 
 all:$(LIBFT) $(NAME)

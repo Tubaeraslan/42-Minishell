@@ -6,11 +6,9 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/02 11:09:19 by ican              #+#    #+#             */
-/*   Updated: 2025/06/28 17:52:46 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/06/29 12:02:10 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-#include "minishell.h"
 
 #include "minishell.h"
 
@@ -193,8 +191,8 @@ void	execute_a_token(t_command *command)
 
 	if (is_built(command->cmd) == 1)
 	{
-		int saved_stdin = dup(STDIN_FILENO);
-		int saved_stdout = dup(STDOUT_FILENO);
+		int saved_stdin = dup(STDIN_FILENO); // 0 klavye girişi
+		int saved_stdout = dup(STDOUT_FILENO); // 1 terminal ekranı
 
 		handle_redirections(command);     // yönlendirmeyi yap
 		execute_built(command);           // built-in komutu çalıştır
@@ -239,6 +237,6 @@ void	execute_commands(t_command *command)
 		return ;
 	else if (!command->is_pipe)
 		execute_a_token(command);
-	// else
-	// 	execute_many_token(command);
+	else
+		execute_many_token(command);
 }

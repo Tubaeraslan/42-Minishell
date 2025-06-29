@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/21 17:40:25 by ican              #+#    #+#             */
-/*   Updated: 2025/06/28 17:53:24 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/06/29 16:55:12 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,11 @@ void print_env_sorted(char **envp);
 char **add_to_env(char **env, char *new_var);
 char **ft_env_dup(char **envp);
 char	**remove_from_env(char **env, const char *var);
+void    execute_many_token(t_command	*command);
+void	handle_redirections(t_command *cmd);
+int	is_built(char *arg);
+void execute_built(t_command *cmd);
+void setup_heredoc(t_command *cmd);
 
 //free
 void free_two_dimension(char **arg);
