@@ -1,18 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   execute_many.c                                     :+:      :+:    :+:   */
+/*   execute_with_pipe.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/28 15:52:32 by ican              #+#    #+#             */
-/*   Updated: 2025/07/01 18:40:57 by teraslan         ###   ########.fr       */
+/*   Created: 2025/07/01 18:36:30 by teraslan          #+#    #+#             */
+/*   Updated: 2025/07/01 18:47:42 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	init_pipe(int fd[2])
+static int	init_pipe(int fd[2])
 {
 	if (pipe(fd) == -1)
 	{
@@ -22,7 +22,7 @@ int	init_pipe(int fd[2])
 	return (0);
 }
 
-void	parent_process_logic(t_command *command, int pre_fd, int fd[2], pid_t pid)
+static void	parent_process_logic(t_command *command, int pre_fd, int fd[2], pid_t pid)
 {
 	if (pre_fd != -1)
 		close(pre_fd);
@@ -55,7 +55,7 @@ void	child_execute_command(t_command *cmd)
 	exit(EXIT_FAILURE);
 }
 
-void	child_process_logic(t_command *cmd, int pre_fd, int fd[2])
+static void	child_process_logic(t_command *cmd, int pre_fd, int fd[2])
 {
 	if (pre_fd != -1)
 	{
@@ -72,7 +72,7 @@ void	child_process_logic(t_command *cmd, int pre_fd, int fd[2])
 	child_execute_command(cmd);
 }
 
-void	handle_fork_process(pid_t pid, t_command *command, int pre_fd, int fd[2])
+static void	handle_fork_process(pid_t pid, t_command *command, int pre_fd, int fd[2])
 {
 	if (pid == 0)
 		child_process_logic(command, pre_fd, fd);
@@ -105,4 +105,3 @@ void	execute_many_token(t_command *command)
 		command = command->next;
 	}
 }
-

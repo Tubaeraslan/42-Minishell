@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/02 11:09:19 by ican              #+#    #+#             */
-/*   Updated: 2025/06/29 12:02:10 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/06/30 20:38:31 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -175,12 +175,48 @@ void	handle_redirections(t_command *cmd)
 	}
 }
 
+void	execute_child_process(t_command *command)
+{
+	char *path;
+
+	handle_redirections(command);
+	path = path_finder(command->cmd, command->tmp->env);
+	if (!path)
+	{
+		ft_putstr_fd("command not found: ", 2);
+		ft_putstr_fd(command->cmd, 2);
+		ft_putchar_fd('\n', 2);
+		exit(127);
+	}
+	execve(path, command->args, command->tmp->env);
+	perror("execve");
+	exit(EXIT_FAILURE);
+}
+
+void	handle_fork_error(void)
+{
+	perror("fork");
+	exit(EXIT_FAILURE);
+}
+
+void	execute_builtin_with_redir(t_command *command)
+{
+	int saved_stdin = dup(STDIN_FILENO);
+	int saved_stdout = dup(STDOUT_FILENO);
+
+	handle_redirections(command);
+	execute_built(command);
+
+	dup2(saved_stdin, STDIN_FILENO);
+	dup2(saved_stdout, STDOUT_FILENO);
+	close(saved_stdin);
+	close(saved_stdout);
+}
 
 //pipe yoksa burda çalışıcak
 void	execute_a_token(t_command *command)
 {
 	pid_t	pid;
-	char	*path;
 	int		status;
 
 	if (!command || !command->cmd)
@@ -191,43 +227,16 @@ void	execute_a_token(t_command *command)
 
 	if (is_built(command->cmd) == 1)
 	{
-		int saved_stdin = dup(STDIN_FILENO); // 0 klavye girişi
-		int saved_stdout = dup(STDOUT_FILENO); // 1 terminal ekranı
-
-		handle_redirections(command);     // yönlendirmeyi yap
-		execute_built(command);           // built-in komutu çalıştır
-
-		// stdout ve stdin'i geri döndür
-		dup2(saved_stdin, STDIN_FILENO);
-		dup2(saved_stdout, STDOUT_FILENO);
-		close(saved_stdin);
-		close(saved_stdout);
+		execute_builtin_with_redir(command);
 		return ;
 	}
 
 	pid = fork();
 	if (pid == -1)
-	{
-		perror("fork");
-		exit(EXIT_FAILURE);
-	}
-	else if (pid == 0) // child process
-	{
-		handle_redirections(command);
-
-		path = path_finder(command->cmd, command->tmp->env);
-		if (!path)
-		{
-			ft_putstr_fd("command not found: ", 2);
-			ft_putstr_fd(command->cmd, 2);
-			ft_putchar_fd('\n', 2);
-			exit(127);
-		}
-		execve(path, command->args, command->tmp->env);
-		perror("execve");
-		exit(EXIT_FAILURE);
-	}
-	else // parent process
+		handle_fork_error();
+	else if (pid == 0)
+		execute_child_process(command);
+	else
 		waitpid(pid, &status, 0);
 }
 

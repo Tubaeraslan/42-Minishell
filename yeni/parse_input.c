@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/31 13:23:51 by teraslan          #+#    #+#             */
-/*   Updated: 2025/06/30 19:56:27 by teraslan         ###   ########.fr       */
+/*   Created: 2025/06/30 18:37:12 by teraslan          #+#    #+#             */
+/*   Updated: 2025/06/30 20:32:42 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,93 +45,62 @@ void add_token(t_command *command, char *buffer)
 	command->token_count++;
 }
 
-char *get_env_value(char **env, char *key)
+static void process_remaining_buffer(t_command *command, t_tokenizer *tk)
 {
-	int i = 0;
-	size_t key_len = ft_strlen(key);
-
-	while (env[i])
+	if (tk->j > 0)
 	{
-		if (ft_strncmp(env[i], key, key_len) == 0 && env[i][key_len] == '=')
-			return env[i] + key_len + 1; // '=' den sonrası value
-		i++;
-	}
-	return NULL;
-}
-
-
-void expand_variable_from_env(t_expand *ex, t_command *command)
-{
-	ex->i++;
-	char varname[256];
-	int k = 0;
-
-	while (ex->input[ex->i] && (ft_isalnum(ex->input[ex->i]) || ex->input[ex->i] == '_'))
-		varname[k++] = ex->input[ex->i++];
-	varname[k] = '\0';
-
-	char *value = get_env_value(command->tmp->env, varname);
-	if (value)
-	{
-		int m = 0;
-		while (value[m])
-			ex->new_input[ex->j++] = value[m++];
+		tk->buffer[tk->j] = '\0';
+		add_token(command, ft_strdup(tk->buffer));
+		tk->j = 0;
 	}
 }
 
-void expand_loop(t_expand *ex, t_command *command)
+static void process_char(t_tokenizer *tk, t_command *command)
 {
-	while (ex->input[ex->i])
+	const char *src = tk->src;
+	int *i = &tk->i;
+
+	if (src[*i] == '\'' || src[*i] == '"')
 	{
-		if (ex->input[ex->i] == '\'' && !ex->double_quote)
-		{
-			ex->single_quote = !ex->single_quote;
-			ex->new_input[ex->j++] = ex->input[ex->i++];
-		}
-		else if (ex->input[ex->i] == '"' && !ex->single_quote)
-		{
-			ex->double_quote = !ex->double_quote;
-			ex->new_input[ex->j++] = ex->input[ex->i++];
-		}
-		else if (ex->input[ex->i] == '$' && !ex->single_quote)
-			expand_variable_from_env(ex, command);
-		else
-			ex->new_input[ex->j++] = ex->input[ex->i++];
+		if (process_quotes(tk))
+			return ;
 	}
+	else if (!tk->inside_quotes && src[*i] == ' ')
+	{
+		process_space(command, tk);
+		(*i)++;
+		return ;
+	}
+	else if (!tk->inside_quotes && (src[*i] == '>' || src[*i] == '<' || src[*i] == '|'))
+	{
+		int len = process_operator(command, tk);
+		(*i) += len;
+		return ;
+	}
+	tk->buffer[(tk->j)++] = src[(*i)++];
 }
 
-void expand_variables(t_command *command)
+static void token(t_command *command)
 {
-	t_expand *ex;
+	t_tokenizer *tk = &command->tokenizer;
 
-	ex = malloc(sizeof(t_expand));
-	if (!ex)
-		return;
-	ex->input = command->tmp->input;
-	ex->new_input = malloc(4096);
-	if (!ex->new_input)
-		return;
-	ex->i = 0;
-	ex->j = 0;
-	ex->single_quote = 0;
-	ex->double_quote = 0;
+	clear_tokens(command);
+	tk->i = 0;
+	tk->j = 0;
+	tk->inside_quotes = 0;
+	tk->char_quote = 0;
+	tk->src = command->tmp->input;
 
-	expand_loop(ex, command);
+	while (tk->src[tk->i])
+		process_char(tk, command);
 
-	ex->new_input[ex->j] = '\0';
-	free(command->tmp->input);
-	command->tmp->input = ft_strdup(ex->new_input);
-	free(ex->new_input);
-	free(ex);
+	process_remaining_buffer(command, tk);
 }
-
 
 void parse_input(t_command *command)
 {
-	//boşsa işlem yapma
 	if (!command->tmp->input || command->tmp->input[0] == '\0')
 		return;
-	//syntax kontrolü açık tınak-yanlış pipe-eksikkomut
 	if (is_valid_syntax(command->tmp->input) == 0)
 	{
 		printf("syntax error: unclosed quote\n");
@@ -147,27 +116,15 @@ void parse_input(t_command *command)
 		printf("syntax error near unexpected token `newline'\n");
 		return;
 	}
-
-	//$kontrolü
 	expand_variables(command);
-
-	//tokenları ayır(space, "" , |,redirect)
 	token(command);
-	//token kontrol
 	int k = 0;
 	while (command->tokens && command->tokens[k])
 	{
     	printf("Token[%d]: %s\n", k, command->tokens[k]);
     	k++;
 	}
-
-	//parse işlemi
-	//tokenları grupla- pipe ı bul - redirectionları
-	//sıralama 1)pipe gördüğünde yeni t_command başlat
-	//2)redirection varsa önceki komutla bağla
-	//3)geriye kalanlar argüman execve()kullanmak için lazım
 	parsing(command);
-
 	//parse kontrol
 	// İlk komutu yazdır
 	int i;
@@ -222,6 +179,4 @@ void parse_input(t_command *command)
     	printf("tmp->cmd = %s\n", tmp->cmd ? tmp->cmd : "(null)");
     	tmp = tmp->next;
 	}
-
 }
-

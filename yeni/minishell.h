@@ -5,29 +5,30 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/21 17:40:25 by ican              #+#    #+#             */
-/*   Updated: 2025/06/30 20:03:22 by teraslan         ###   ########.fr       */
+/*   Created: 2025/06/30 18:04:57 by teraslan          #+#    #+#             */
+/*   Updated: 2025/07/01 18:48:56 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
+#include <stdlib.h>
+#include <unistd.h>
+#include <signal.h>
 #include <readline/readline.h>
 #include <readline/history.h>
-#include <stdlib.h>
-#include <signal.h>
-#include <unistd.h>
 #include "libft/libft.h"
-#include <stdio.h>
+#include <sys/types.h>
+#include <sys/wait.h> 
 # include <fcntl.h>
-# include <sys/wait.h>
 
 typedef struct s_data
 {
 	char *input;
 	char **env;
 }	t_data;
+//$ için
 typedef struct s_expand
 {
 	int i;
@@ -63,7 +64,6 @@ typedef struct s_tokenizer
 	const char *src;
 }	t_tokenizer;
 
-
 typedef struct s_command
 {
 	char **tokens; //["ls" , "-l", "cat", "hello","|"]
@@ -84,41 +84,47 @@ typedef struct s_command
 	t_tokenizer tokenizer;
 }	t_command;
 
+
+void handle_signals();
+char **ft_env_dup(char **envp);
 void parse_input(t_command *command);
 int is_valid_syntax(char *input);
 int check_pipe(char *input);
-int check_redirects(char *input);
-void token(t_command *command);
+int	check_redirects(char *input);
+void expand_variables(t_command *command);
+char *get_env_value(char **env, char *key);
+void clear_tokens(t_command *command);
+int process_quotes(t_tokenizer *tk);
+void process_space(t_command *command, t_tokenizer *tk);
+int process_operator(t_command *command, t_tokenizer *tk);
+void add_token(t_command *command, char *buffer);
 void parsing(t_command *command);
+int handle_infile(t_command *command, char **tokens, int *i);
+int handle_outfile(t_command *command, char **tokens, int *i, int append);
+int handle_heredoc(t_command *command, char **tokens, int *i);
+t_command *create_next_command(t_command *command, char **tokens, int index);
+void update_args_and_cmd(t_command *command, char **args, int count);
 void	execute_commands(t_command *command);
+void setup_heredoc(t_command *cmd);
+int	is_built(char *arg);
+void	execute_builtin_with_redir(t_command *command);
+void	handle_fork_error(void);
+void	handle_redirections(t_command *cmd);
+void execute_built(t_command *cmd);
+void	execute_a_token(t_command *command);
+void	execute_child_process(t_command *command);
 void ft_echo(t_command *cmd);
 void ft_pwd();
-int ft_exit(t_command *cmd);
 void ft_env(t_command *cmd);
+int	ft_exit(t_command *cmd);
 void ft_export(t_command *cmd);
 void ft_unset(t_command *cmd);
 void ft_cd(t_command *cmd);
-void add_token(t_command *command, char *buffer);
-
-char	*path_finder(char *cmd, char **env);
-
-int numeric_control(char *arg);
-void exit_program(t_command *cmd, int exit_code);
-void update_env(char ***envp, char *arg);
 int is_valid(char *str);
-void print_env_sorted(char **envp);
-char **add_to_env(char **env, char *new_var);
-char **ft_env_dup(char **envp);
-char	**remove_from_env(char **env, const char *var);
-void    execute_many_token(t_command	*command);
-void	handle_redirections(t_command *cmd);
-int	is_built(char *arg);
-void execute_built(t_command *cmd);
-void setup_heredoc(t_command *cmd);
-
-//free
-void free_two_dimension(char **arg);
-void    free_data(t_data *tmp);
-void    all_free(t_command *cmd);
+char	**sort_env(char **env);
+void free_env(char **env);
+void update_env(char ***envp, char *arg);
+void	execute_many_token(t_command *command);
+char	*path_finder(char *cmd, char **env);
 
 #endif

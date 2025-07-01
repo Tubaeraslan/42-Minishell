@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   lexer.c                                            :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/31 14:00:48 by teraslan          #+#    #+#             */
-/*   Updated: 2025/06/16 16:41:05 by teraslan         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "minishell.h"
 
 static void clear_tokens(t_command *command)
@@ -18,7 +6,6 @@ static void clear_tokens(t_command *command)
 
 	if (!command->tokens)
 		return;
-
 	while (i < command->token_count)
 	{
 		free(command->tokens[i]);
@@ -29,44 +16,11 @@ static void clear_tokens(t_command *command)
 	command->token_count = 0;
 }
 
-static void add_token(t_command *command, char *buffer)
-{
-	char **tmp;
-	int i = 0;
-
-	// Yeni token dizisi için yer ayır (eski + 1 yeni + NULL için 1)
-	tmp = malloc(sizeof(char *) * (command->token_count + 2));
-	if (!tmp)
-	{
-		perror("malloc failed");
-		exit(1);
-	}
-
-	// Eski token'ları yeni dizinin içine kopyala
-	while (i < command->token_count)
-	{
-		tmp[i] = command->tokens[i];
-		i++;
-	}
-
-	// Yeni token'ı ekle
-	tmp[i++] = buffer;
-	tmp[i] = NULL;
-
-	// Önceki token dizisi varsa ama içindekiler zaten tmp'ye aktarıldı
-	// sadece token dizisinin kendisini free() etmek yeterli olur
-	if (command->tokens)
-		free(command->tokens);
-
-	command->tokens = tmp;
-	command->token_count++;
-}
-
 static int handle_operators(t_command *command, char *src)
 {
 	if (src[0] == '>' && src[1] == '>')
 	{
-		add_token(command,ft_strdup(">>"));
+		add_token(command, ft_strdup(">>"));
 		return 2;
 	}
 	else if (src[0] == '<' && src[1] == '<')
@@ -92,75 +46,97 @@ static int handle_operators(t_command *command, char *src)
 	return 0;
 }
 
+static int process_quotes(t_tokenizer *tk)
+{
+	const char *src = tk->src;
+	int *i = &tk->i;
+
+	if (!tk->inside_quotes)
+	{
+		tk->inside_quotes = 1;
+		tk->char_quote = src[*i];
+		(*i)++;
+		return 1;
+	}
+	else if (src[*i] == tk->char_quote)
+	{
+		tk->inside_quotes = 0;
+		tk->char_quote = 0;
+		(*i)++;
+		return 1;
+	}
+	return 0;
+}
+
+static void process_space(t_command *command, t_tokenizer *tk)
+{
+	if (tk->j > 0)
+	{
+		tk->buffer[tk->j] = '\0';
+		add_token(command, ft_strdup(tk->buffer));
+		tk->j = 0;
+	}
+}
+
+static int process_operator(t_command *command, t_tokenizer *tk)
+{
+	if (tk->j > 0)
+	{
+		tk->buffer[tk->j] = '\0';
+		add_token(command, ft_strdup(tk->buffer));
+		tk->j = 0;
+	}
+	return handle_operators(command, (char *)&tk->src[tk->i]);
+}
+
+static void process_remaining_buffer(t_command *command, t_tokenizer *tk)
+{
+	if (tk->j > 0)
+	{
+		tk->buffer[tk->j] = '\0';
+		add_token(command, ft_strdup(tk->buffer));
+		tk->j = 0;
+	}
+}
+
+static void process_char(t_tokenizer *tk, t_command *command)
+{
+	const char *src = tk->src;
+	int *i = &tk->i;
+
+	if (src[*i] == '\'' || src[*i] == '"')
+	{
+		if (process_quotes(tk))
+			return ;
+	}
+	else if (!tk->inside_quotes && src[*i] == ' ')
+	{
+		process_space(command, tk);
+		(*i)++;
+		return ;
+	}
+	else if (!tk->inside_quotes && (src[*i] == '>' || src[*i] == '<' || src[*i] == '|'))
+	{
+		int len = process_operator(command, tk);
+		(*i) += len;
+		return ;
+	}
+	tk->buffer[(tk->j)++] = src[(*i)++];
+}
+
 void token(t_command *command)
 {
-	int i;
-	int j;
-	char *src;
-	char char_quote;
-	char buffer[1024];
-	int inside_quotes;
+	t_tokenizer *tk = &command->tokenizer;
 
 	clear_tokens(command);
-	i = 0;
-	j = 0;
-	inside_quotes = 0;
-	char_quote = 0;
-	src = command->tmp->input;
-	while (src[i])
-    {
-        if (src[i] == '\'' || src[i] == '"')
-        {
-            if (!inside_quotes)
-            {
-                inside_quotes = 1;
-                char_quote = src[i];
-                i++;
-            }
-            else if (char_quote == src[i])
-            {
-                inside_quotes = 0;
-                char_quote = 0;
-                i++;
-            }
-            else
-            {
-                buffer[j++] = src[i++];
-            }
-        }
-        else if (!inside_quotes && src[i] == ' ')
-        {
-            // Boşluk gördüğünde buffer'da token varsa ekle, boşluk token değil
-            if (j > 0)
-            {
-                buffer[j] = '\0';
-                add_token(command, ft_strdup(buffer));
-                j = 0;
-            }
-            i++;
-        }
-        else if (!inside_quotes && (src[i] == '>' || src[i] == '<' || src[i] == '|'))
-        {
-            // Önce varsa buffer'daki tokenı ekle
-            if (j > 0)
-            {
-                buffer[j] = '\0';
-                add_token(command, ft_strdup(buffer));
-                j = 0;
-            }
-            // Operatör tokenını ekle ve ilerle
-            int len = handle_operators(command, &src[i]);
-            i += len;
-        }
-        else
-        {
-            // Normal karakter, token'a ekle
-            buffer[j++] = src[i++];
-        }
-    }
-	if (j > 0)
-	{
-		buffer[j] = '\0';
-		add_token(command, ft_strdup(buffer));
-	}
+	tk->i = 0;
+	tk->j = 0;
+	tk->inside_quotes = 0;
+	tk->char_quote = 0;
+	tk->src = command->tmp->input;
+
+	while (tk->src[tk->i])
+		process_char(tk, command);
+
+	process_remaining_buffer(command, tk);
 }
