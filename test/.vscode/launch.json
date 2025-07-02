@@ -1,0 +1,18 @@
+{
+	"version": "0.2.0",
+	"configurations": [
+	  {
+		"name": "Launch Minishell",
+		"type": "cppdbg",
+		"request": "launch",
+		"program": "${workspaceFolder}/minishell/minishell",
+		"args": [],
+		"stopAtEntry": false,
+		"cwd": "${workspaceFolder}/minishell",
+		"environment": [],
+		"externalConsole": false,
+		"MIMode": "gdb",
+	  }
+	]
+  }
+  

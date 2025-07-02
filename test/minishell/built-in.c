@@ -1,0 +1,136 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   built-in.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/01 18:06:18 by teraslan          #+#    #+#             */
+/*   Updated: 2025/07/02 14:44:15 by teraslan         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "minishell.h"
+
+int is_valid(char *str)
+{
+	int i = 0;
+
+	if (!str || !(ft_isalpha(str[0]) || str[0] == '_'))
+		return (0);
+	while (str[i] && str[i] != '=')
+	{
+		if (!(ft_isalnum(str[i]) || str[i] == '_'))
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
+void	execute_builtin_with_redir(t_command *command)
+{
+	int saved_stdin = dup(STDIN_FILENO);
+	int saved_stdout = dup(STDOUT_FILENO);
+
+	handle_redirections(command);
+	execute_built(command);
+
+	dup2(saved_stdin, STDIN_FILENO);
+	dup2(saved_stdout, STDOUT_FILENO);
+	close(saved_stdin);
+	close(saved_stdout);
+}
+
+char *get_basename(char *path)
+{
+	char *slash;
+
+	if (!path)
+		return (NULL);
+	slash = ft_strrchr(path, '/');
+	if (slash)
+		return (slash + 1); // son /'den sonrası
+	return (path);
+}
+
+int	is_built(char *arg)
+{
+	char *cmd;
+	int len;
+
+	if (!arg)
+		return (0);
+
+	// sondaki komut adını bul (örneğin /bin/echo -> echo)
+	cmd = arg;
+	len = ft_strlen(arg);
+	while (len > 0 && arg[len] != '/')
+		len--;
+	if (arg[len] == '/')
+		cmd = &arg[len + 1];
+
+	// Şimdi sadece "echo", "cd" vs ile karşılaştır
+	if (ft_strncmp(cmd, "echo", 5) == 0)
+		return (1);
+	if (ft_strncmp(cmd, "cd", 3) == 0)
+		return (1);
+	if (ft_strncmp(cmd, "pwd", 4) == 0)
+		return (1);
+	if (ft_strncmp(cmd, "export", 7) == 0)
+		return (1);
+	if (ft_strncmp(cmd, "unset", 6) == 0)
+		return (1);
+	if (ft_strncmp(cmd, "env", 4) == 0)
+		return (1);
+	if (ft_strncmp(cmd, "exit", 5) == 0)
+		return (1);
+
+	return (0);
+}
+
+void execute_built(t_command *cmd)
+{
+	char *cmd_name;
+	int len;
+
+	if (!cmd || !cmd->cmd)
+		return ;
+
+	// sondaki komut adını bul (örneğin /bin/echo -> echo)
+	cmd_name = cmd->cmd;
+	len = ft_strlen(cmd->cmd);
+	while (len > 0 && cmd->cmd[len] != '/')
+		len--;
+	if (cmd->cmd[len] == '/')
+		cmd_name = &cmd->cmd[len + 1];
+
+	// artık sadece komut ismine göre karşılaştır
+	if (ft_strncmp(cmd_name, "echo", 5) == 0)
+	{
+		ft_echo(cmd);
+	}
+	else if (ft_strncmp(cmd_name, "pwd", 4) == 0)
+	{
+		ft_pwd();
+	}
+	else if (ft_strncmp(cmd_name, "env", 4) == 0)
+	{
+		ft_env(cmd);
+	}
+	else if (ft_strncmp(cmd_name, "exit", 5) == 0)
+	{
+		cmd->last_exit_code = ft_exit(cmd);
+	}
+	else if (ft_strncmp(cmd_name, "export", 7) == 0)
+	{
+		ft_export(cmd);
+	}
+	else if (ft_strncmp(cmd_name, "unset", 6) == 0)
+	{
+		ft_unset(cmd);
+	}
+	else if (ft_strncmp(cmd_name, "cd", 3) == 0)
+		ft_cd(cmd);
+}
+
+
