@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ican <<ican@student.42.fr>>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 13:06:40 by teraslan          #+#    #+#             */
-/*   Updated: 2025/06/28 17:53:10 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/05 10:55:24 by ican             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,7 @@ int main(int argc, char **argv, char **envp)
 		if (!input)
 		{
 			printf("exit\n");
+			all_free(&command); //init commad!!!!!!!!!!
 			break;
 		}
 		else
@@ -77,6 +78,9 @@ int main(int argc, char **argv, char **envp)
 		//parse
 		parse_input(&command);
 		execute_commands(&command);
+		all_free(&command);
+		printf("BITTTI*********************************************************************\n");
+		
 	}
 	
 	return 0;

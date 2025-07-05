@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ican <<ican@student.42.fr>>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:04:57 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/01 18:48:56 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/05 11:41:07 by ican             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,5 +126,8 @@ void free_env(char **env);
 void update_env(char ***envp, char *arg);
 void	execute_many_token(t_command *command);
 char	*path_finder(char *cmd, char **env);
+
+
+void    all_free(t_command *cmd);
 
 #endif
