@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing_utils.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ican <<ican@student.42.fr>>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 20:26:09 by teraslan          #+#    #+#             */
-/*   Updated: 2025/06/30 20:30:58 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/05 13:38:00 by ican             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,18 +77,17 @@ t_command *create_next_command(t_command *command, char **tokens, int index)
 
 void update_args_and_cmd(t_command *command, char **args, int count)
 {
-	if (command->args)
-	{
-		for (int k = 0; command->args[k]; k++)
-			free(command->args[k]);
-		free(command->args);
-	}
-	command->args = args;
+    // Öncekini biz serbest bırakmıyoruz, dışarıda yapılmalı.
+    command->args = args;
 
-	if (command->cmd)
-		free(command->cmd);
-	if (count > 0)
-		command->cmd = ft_strdup(args[0]);
-	else
-		command->cmd = NULL;
+    if (command->cmd)
+    {
+        free(command->cmd);
+        command->cmd = NULL;
+    }
+
+    if (count > 0 && args && args[0])
+        command->cmd = ft_strdup(args[0]);
+    else
+        command->cmd = NULL;
 }

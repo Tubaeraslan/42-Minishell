@@ -6,7 +6,7 @@
 /*   By: ican <<ican@student.42.fr>>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:04:57 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/05 11:41:07 by ican             ###   ########.fr       */
+/*   Updated: 2025/07/05 12:56:35 by ican             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,5 +129,6 @@ char	*path_finder(char *cmd, char **env);
 
 
 void    all_free(t_command *cmd);
+void clear_command_data(t_command *cmd);
 
 #endif

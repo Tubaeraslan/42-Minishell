@@ -3,28 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ican <<ican@student.42.fr>>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 20:19:32 by teraslan          #+#    #+#             */
-/*   Updated: 2025/06/30 20:30:16 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/05 12:56:25 by ican             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static void clear_command_data(t_command *cmd)
+void clear_command_data(t_command *cmd)
 {
 	if (cmd->cmd)
 	{
 		free(cmd->cmd);
 		cmd->cmd = NULL;
-	}
-	if (cmd->args)
-	{
-		for (int i = 0; cmd->args[i]; i++)
-			free(cmd->args[i]);
-		free(cmd->args);
-		cmd->args = NULL;
 	}
 	if (cmd->infile)
 	{

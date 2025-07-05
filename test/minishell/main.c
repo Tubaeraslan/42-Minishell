@@ -6,7 +6,7 @@
 /*   By: ican <<ican@student.42.fr>>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:04:40 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/05 11:41:45 by ican             ###   ########.fr       */
+/*   Updated: 2025/07/05 13:53:56 by ican             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ int main(int argc, char **argv, char **envp)
 		parse_input(command);
 		execute_commands(command);
 		all_free(command);
-		free(input);
+		command = NULL;
 	}
 	return 0;
 }
