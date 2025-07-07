@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 20:34:23 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/01 18:36:20 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/07 14:38:56 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,11 +43,13 @@ char	*path_finder(char *cmd, char **env)
 	return (NULL);
 }
 
-void	execute_child_process(t_command *command)
+void execute_child_process(t_command *command)
 {
 	char *path;
 
-	handle_redirections(command);
+	if (handle_redirections(command) == -1)
+		exit(1);  // Redirection hatası varsa çocuk process'i sonlandır
+
 	path = path_finder(command->cmd, command->tmp->env);
 	if (!path)
 	{
@@ -67,12 +69,16 @@ void	handle_fork_error(void)
 	exit(EXIT_FAILURE);
 }
 
-void	execute_commands(t_command *command)
+void execute_commands(t_command *command)
 {
 	if (!command || command->token_count == 0)
 		return ;
+
 	if (!command->is_pipe)
-		execute_a_token(command);
+	{
+		if (!command->parsing_error)
+			execute_a_token(command);
+	}
 	else
 		execute_many_token(command);
 }

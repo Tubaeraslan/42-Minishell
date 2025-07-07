@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ican <<ican@student.42.fr>>                +#+  +:+       +#+        */
+/*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 20:19:32 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/05 12:56:25 by ican             ###   ########.fr       */
+/*   Updated: 2025/07/07 15:38:14 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,16 +83,34 @@ void parsing(t_command *command)
 	int i = 0;
 	int count = 0;
 	char **tmp_args;
+	int error_printed = 0;
 
+	command->parsing_error = 0;
 	clear_command_data(command);
 	tmp_args = alloc_args(command->token_count);
 	if (!tmp_args)
+	{
+		command->last_exit_code = 1;
 		return;
+	}
 	while (i < command->token_count)
 	{
 		char *tmp_token = command->tokens[i];
-		if (check_and_handle_redirect(command, command->tokens, &i))
+		int redirect_result = check_and_handle_redirect(command, command->tokens, &i);
+		if (redirect_result == 1)
 			continue;
+		else if (redirect_result == -1){
+			command->parsing_error = 1;
+			if (!error_printed)
+			{
+				ft_putstr_fd("minishell: ", 2);
+				perror(command->tokens[i]); // ya da uygun dosya adını gönder
+				error_printed = 1;
+			}
+			command->last_exit_code = 1;
+			i++;
+			continue;
+		}
 		if (ft_strncmp(tmp_token, "|", 2) == 0)
 		{
 			create_next_command(command, command->tokens, i);

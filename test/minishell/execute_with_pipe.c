@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:36:30 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/02 15:32:00 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/07 18:02:31 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,22 @@ void execute_many_token(t_command *command)
             exit(EXIT_FAILURE);
         if (cmd->is_heredoc)
             setup_heredoc(cmd);
+
+        if (cmd->parsing_error)
+        {
+            pid = fork();
+            if (pid == -1)
+            {
+                perror("fork");
+                exit(EXIT_FAILURE);
+            }
+            if (pid == 0)
+                exit(1); // çocuk process'te çık
+            pids[i++] = pid; // parent process'te PID'yi kaydet
+            cmd = cmd->next;
+            continue;
+        }
+
         pid = fork();
         if (pid == -1)
         {
@@ -84,19 +100,18 @@ void execute_many_token(t_command *command)
         }
         if (pid == 0)
         {
-            // Çocuk process
             if (pre_fd != -1)
             {
                 dup2(pre_fd, STDIN_FILENO);
                 close(pre_fd);
             }
+            handle_redirections(cmd);
             if (cmd->next)
             {
                 close(fd[0]);
                 dup2(fd[1], STDOUT_FILENO);
                 close(fd[1]);
             }
-            handle_redirections(cmd);
             if (is_built(cmd->cmd))
             {
                 execute_built(cmd);
@@ -119,7 +134,6 @@ void execute_many_token(t_command *command)
         }
         else
         {
-            // Parent process
             if (pre_fd != -1)
                 close(pre_fd);
             if (cmd->next)
@@ -129,6 +143,7 @@ void execute_many_token(t_command *command)
             cmd = cmd->next;
         }
     }
+
     // Tüm çocukları bekle ve sonuncusunun exit statusunu al
     for (int j = 0; j < count; j++)
     {
@@ -137,6 +152,8 @@ void execute_many_token(t_command *command)
         {
             if (WIFEXITED(status))
                 last_exit_status = WEXITSTATUS(status);
+            else if(WIFSIGNALED(status))
+                last_exit_status = 128 + WTERMSIG(status);
             else
                 last_exit_status = 1; // abnormal exit
         }

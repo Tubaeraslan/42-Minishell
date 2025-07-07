@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 20:41:22 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/01 18:07:36 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/07 14:38:23 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,10 +41,9 @@ void setup_heredoc(t_command *cmd)
     cmd->heredoc_fd = pipe_fd[0];
 }
 
-void	handle_redirections(t_command *cmd)
+int handle_redirections(t_command *cmd)
 {
 	int	fd;
-
 
 	if (cmd->is_heredoc)
 	{
@@ -56,8 +55,8 @@ void	handle_redirections(t_command *cmd)
 		fd = open(cmd->infile, O_RDONLY);
 		if (fd < 0)
 		{
-			perror("open infile");
-			exit(EXIT_FAILURE);
+			perror(cmd->infile);  // Hatanın daha anlamlı görünmesi için dosya ismini yaz
+			return -1;            // Hata kodu döndür
 		}
 		dup2(fd, STDIN_FILENO);
 		close(fd);
@@ -70,12 +69,13 @@ void	handle_redirections(t_command *cmd)
 			fd = open(cmd->outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 		if (fd < 0)
 		{
-			perror("open outfile");
-			exit(EXIT_FAILURE);
+			perror(cmd->outfile);
+			return -1;
 		}
 		dup2(fd, STDOUT_FILENO);
 		close(fd);
 	}
+	return 0; // Başarı durumu
 }
 
 
