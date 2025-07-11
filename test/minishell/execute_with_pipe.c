@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:36:30 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/07 18:02:31 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/11 16:32:25 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,13 +105,13 @@ void execute_many_token(t_command *command)
                 dup2(pre_fd, STDIN_FILENO);
                 close(pre_fd);
             }
-            handle_redirections(cmd);
             if (cmd->next)
             {
                 close(fd[0]);
                 dup2(fd[1], STDOUT_FILENO);
                 close(fd[1]);
             }
+            handle_redirections(cmd);
             if (is_built(cmd->cmd))
             {
                 execute_built(cmd);

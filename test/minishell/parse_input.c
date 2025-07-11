@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:37:12 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/07 16:01:50 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/11 18:53:49 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ static void process_char(t_tokenizer *tk, t_command *command)
 		if (process_quotes(tk))
 			return ;
 	}
-	else if (!tk->inside_quotes && src[*i] == ' ')
+	else if (!tk->inside_quotes && (src[*i] == ' ' || src[*i] == '\t'))
 	{
 		process_space(command, tk);
 		(*i)++;
@@ -101,19 +101,28 @@ void parse_input(t_command *command)
 {
 	if (!command->tmp->input || command->tmp->input[0] == '\0')
 		return;
+
 	if (is_valid_syntax(command->tmp->input) == 0)
 	{
 		printf("syntax error: unclosed quote\n");
+		command->parsing_error = 1;
+		command->last_exit_code = 2;
 		return;
 	}
+
 	if (check_pipe(command->tmp->input) == 0)
 	{
 		printf("syntax error near unexpected token `|'\n");
+		command->parsing_error = 1;
+		command->last_exit_code = 2;
 		return;
 	}
+
 	if (check_redirects(command->tmp->input) == 0)
 	{
 		printf("syntax error near unexpected token `newline'\n");
+		command->parsing_error = 1;
+		command->last_exit_code = 2;
 		return;
 	}
 	expand_variables(command);

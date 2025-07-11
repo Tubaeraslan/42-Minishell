@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:04:57 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/07 14:38:38 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/11 16:50:23 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,8 @@
 #include <sys/types.h>
 #include <sys/wait.h> 
 # include <fcntl.h>
+#include <errno.h>
+#include <sys/stat.h>
 
 typedef struct s_data
 {

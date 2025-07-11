@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:06:18 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/02 14:44:15 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/10 15:16:22 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,19 +60,13 @@ int	is_built(char *arg)
 
 	if (!arg)
 		return (0);
-
-	// sondaki komut adını bul (örneğin /bin/echo -> echo)
 	cmd = arg;
 	len = ft_strlen(arg);
 	while (len > 0 && arg[len] != '/')
 		len--;
 	if (arg[len] == '/')
 		cmd = &arg[len + 1];
-
-	// Şimdi sadece "echo", "cd" vs ile karşılaştır
-	if (ft_strncmp(cmd, "echo", 5) == 0)
-		return (1);
-	if (ft_strncmp(cmd, "cd", 3) == 0)
+	if (ft_strncmp(cmd, "echo", 5) == 0 || ft_strncmp(cmd, "cd", 3) == 0)
 		return (1);
 	if (ft_strncmp(cmd, "pwd", 4) == 0)
 		return (1);
@@ -84,7 +78,6 @@ int	is_built(char *arg)
 		return (1);
 	if (ft_strncmp(cmd, "exit", 5) == 0)
 		return (1);
-
 	return (0);
 }
 
@@ -95,40 +88,24 @@ void execute_built(t_command *cmd)
 
 	if (!cmd || !cmd->cmd)
 		return ;
-
-	// sondaki komut adını bul (örneğin /bin/echo -> echo)
 	cmd_name = cmd->cmd;
 	len = ft_strlen(cmd->cmd);
 	while (len > 0 && cmd->cmd[len] != '/')
 		len--;
 	if (cmd->cmd[len] == '/')
 		cmd_name = &cmd->cmd[len + 1];
-
-	// artık sadece komut ismine göre karşılaştır
 	if (ft_strncmp(cmd_name, "echo", 5) == 0)
-	{
 		ft_echo(cmd);
-	}
 	else if (ft_strncmp(cmd_name, "pwd", 4) == 0)
-	{
 		ft_pwd();
-	}
 	else if (ft_strncmp(cmd_name, "env", 4) == 0)
-	{
 		ft_env(cmd);
-	}
 	else if (ft_strncmp(cmd_name, "exit", 5) == 0)
-	{
 		cmd->last_exit_code = ft_exit(cmd);
-	}
 	else if (ft_strncmp(cmd_name, "export", 7) == 0)
-	{
 		ft_export(cmd);
-	}
 	else if (ft_strncmp(cmd_name, "unset", 6) == 0)
-	{
 		ft_unset(cmd);
-	}
 	else if (ft_strncmp(cmd_name, "cd", 3) == 0)
 		ft_cd(cmd);
 }

@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 20:19:32 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/07 15:38:14 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/11 16:02:58 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,6 @@ void clear_command_data(t_command *cmd)
 	cmd->heredoc_fd = 0;
 	cmd->is_heredoc = 0;
 	cmd->is_append = 0;
-	cmd->next = NULL; 
 }
 
 static int add_arg(char **args, int index, char *token)
@@ -104,8 +103,11 @@ void parsing(t_command *command)
 			if (!error_printed)
 			{
 				ft_putstr_fd("minishell: ", 2);
-				perror(command->tokens[i]); // ya da uygun dosya adını gönder
-				error_printed = 1;
+				if (command->tokens[i + 1]) // varsa dosya adı
+					perror(command->tokens[i + 1]);
+				else
+					perror("missing file"); // ya da uygun dosya adını gönder
+			error_printed = 1;
 			}
 			command->last_exit_code = 1;
 			i++;

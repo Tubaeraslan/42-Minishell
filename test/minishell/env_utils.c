@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:27:03 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/01 18:28:39 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/11 18:42:55 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,9 @@ void update_env(char ***envp, char *arg)
 	int i = 0;
 	int key_len = 0;
 	char *key;
+
+	if (!arg) // NULL arguman gelirse erken çık
+		return;
 
 	while (arg[key_len] && arg[key_len] != '=')
 		key_len++;

@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 20:26:09 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/07 15:39:30 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/11 16:03:15 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,19 +30,29 @@ int handle_infile(t_command *command, char **tokens, int *i)
 int handle_outfile(t_command *command, char **tokens, int *i, int append)
 {
 	char *filename = tokens[*i + 1];
+	int fd;
 
-	if (access(filename, F_OK) == 0 && access(filename, W_OK) != 0)
+	// Dosyayı oluştur (bash gibi)
+	fd = open(filename, O_CREAT | O_TRUNC | O_WRONLY, 0644);
+	if (fd < 0)
 	{
+		//perror("open failed");
 		command->last_exit_code = 1;
 		return -1;
 	}
+	close(fd); // Dosyayı sadece oluştur ve kapa
+
+	// Önceki outfile varsa free et
 	if (command->outfile)
 		free(command->outfile);
-	command->outfile = ft_strdup(tokens[*i + 1]);
+
+	// Yeni outfile ayarla
+	command->outfile = ft_strdup(filename);
 	command->is_append = append;
 	*i += 2;
 	return 1;
 }
+
 
 int handle_heredoc(t_command *command, char **tokens, int *i)
 {

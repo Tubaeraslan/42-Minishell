@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:38:59 by teraslan          #+#    #+#             */
-/*   Updated: 2025/06/30 19:06:35 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/11 14:15:04 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,13 +48,14 @@ static int	is_invalid_pipe(char *input)
 		return (1);
 	while (input[i])
 	{
-		is_in_quotes(input[i], &single_flag, &double_flag);
-		if (input[i] == '|' && !single_flag && !double_flag)
-			if (has_consecutive_pipes(input, i))
+		if (!is_in_quotes(input[i], &single_flag, &double_flag))
+		{
+			if (input[i] == '|' && has_consecutive_pipes(input, i))
 				return (1);
+		}
 		i++;
 	}
-	return (0);
+	return 0;
 }
 
 static int ends_with_pipe(char *input)

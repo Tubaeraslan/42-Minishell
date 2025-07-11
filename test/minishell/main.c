@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:04:40 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/07 14:02:10 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/11 19:01:23 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,7 @@ int main(int argc, char **argv, char **envp)
 			add_history(input);
 		command->tmp->input = input;
 		parse_input(command);
+		printf("Debug: cmd->cmd = '%s'\n", command->cmd);
 		execute_commands(command);
 		// all_free(command);
 		// command = NULL;
