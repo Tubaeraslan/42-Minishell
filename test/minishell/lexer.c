@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ican <<ican@student.42.fr>>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 20:11:17 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/11 14:47:46 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/12 19:32:11 by ican             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,10 +51,10 @@ void clear_tokens(t_command *command)
 	while (i < command->token_count)
 	{
 		free(command->tokens[i]);
+		command->tokens[i] = NULL;
 		i++;
 	}
 	free(command->tokens);
-	command->tokens = NULL;
 	command->token_count = 0;
 }
 

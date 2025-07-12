@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing_utils.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ican <<ican@student.42.fr>>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 20:26:09 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/11 16:03:15 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/12 19:22:58 by ican             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,10 @@ int handle_infile(t_command *command, char **tokens, int *i)
 		return -1;
 	}
 	if (command->infile)
+	{
 		free(command->infile);
+		command->infile = NULL;
+	}
 	command->infile = ft_strdup(tokens[*i + 1]);
 	*i += 2;
 	return 1;
@@ -44,9 +47,10 @@ int handle_outfile(t_command *command, char **tokens, int *i, int append)
 
 	// Önceki outfile varsa free et
 	if (command->outfile)
+	{
 		free(command->outfile);
-
-	// Yeni outfile ayarla
+		command->outfile = NULL;
+	}// Yeni outfile ayarla
 	command->outfile = ft_strdup(filename);
 	command->is_append = append;
 	*i += 2;
@@ -57,7 +61,10 @@ int handle_outfile(t_command *command, char **tokens, int *i, int append)
 int handle_heredoc(t_command *command, char **tokens, int *i)
 {
 	if (command->heredoc_limiter)
+	{
 		free(command->heredoc_limiter);
+		command->heredoc_limiter = NULL;
+	}
 	command->heredoc_limiter = ft_strdup(tokens[*i + 1]);
 	if (command->infile)
 	{
@@ -84,6 +91,7 @@ t_command *create_next_command(t_command *command, char **tokens, int index)
 	if (!next_cmd->tokens)
 	{
 		free(next_cmd);
+		next_cmd = NULL;
 		return NULL;
 	}
 	for (int j = 0; j < pipe_token_count; j++)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ican <<ican@student.42.fr>>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 20:19:32 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/11 16:02:58 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/12 19:31:52 by ican             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,6 @@
 
 void clear_command_data(t_command *cmd)
 {
-	if (cmd->cmd)
-	{
-		free(cmd->cmd);
-		cmd->cmd = NULL;
-	}
 	if (cmd->infile)
 	{
 		free(cmd->infile);
