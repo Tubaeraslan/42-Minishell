@@ -6,7 +6,7 @@
 /*   By: ican <<ican@student.42.fr>>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 20:11:17 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/12 19:32:11 by ican             ###   ########.fr       */
+/*   Updated: 2025/07/13 14:37:08 by ican             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,7 @@ void clear_tokens(t_command *command)
 		i++;
 	}
 	free(command->tokens);
+	command->tokens = NULL;
 	command->token_count = 0;
 }
 

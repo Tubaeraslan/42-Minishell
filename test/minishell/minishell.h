@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ican <<ican@student.42.fr>>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:04:57 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/13 12:43:35 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/13 16:15:40 by ican             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,7 +131,9 @@ void	execute_many_token(t_command *command);
 char	*path_finder(char *cmd, char **env);
 void sigint_handler(int sig);
 
-void    all_free(t_command *cmd);
+void free_two_dimension(char **arg);
+void all_free(t_command *comd, t_data *shell);
 void clear_command_data(t_command *cmd);
+void    free_data(t_data *tmp);
 
 #endif

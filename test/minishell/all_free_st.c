@@ -6,7 +6,7 @@
 /*   By: ican <<ican@student.42.fr>>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/21 16:09:21 by ican              #+#    #+#             */
-/*   Updated: 2025/07/12 20:03:32 by ican             ###   ########.fr       */
+/*   Updated: 2025/07/13 17:23:50 by ican             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ void    free_data(t_data *tmp)
 }
 
 
-void all_free(t_command *comd)
+void all_free(t_command *comd, t_data *shell)
 {
     if (!comd)
         return;
@@ -57,6 +57,7 @@ void all_free(t_command *comd)
         comd->args = NULL;
     }
     clear_command_data(comd);
+    free_data(shell);
 }
 
 /*

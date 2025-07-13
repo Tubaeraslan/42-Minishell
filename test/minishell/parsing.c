@@ -6,7 +6,7 @@
 /*   By: ican <<ican@student.42.fr>>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 20:19:32 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/12 19:31:52 by ican             ###   ########.fr       */
+/*   Updated: 2025/07/13 17:24:00 by ican             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ void clear_command_data(t_command *cmd)
         free(cmd->heredoc_limiter);
         cmd->heredoc_limiter = NULL;
     }
+	free_data(cmd->tmp);
 	cmd->is_pipe = 0;
 	cmd->heredoc_fd = 0;
 	cmd->is_heredoc = 0;

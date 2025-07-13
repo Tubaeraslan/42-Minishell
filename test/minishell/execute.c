@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ican <<ican@student.42.fr>>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 20:34:23 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/13 12:52:24 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/13 14:44:58 by ican             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ char	*path_finder(char *cmd, char **env)
 		free(path);
 		i++;
 	}
-	//ft_free_split(paths);
+	free_two_dimension(paths);
 	return (NULL);
 }
 

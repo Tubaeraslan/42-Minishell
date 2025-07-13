@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ican <<ican@student.42.fr>>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 19:24:49 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/02 14:38:06 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/13 15:43:12 by ican             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,10 @@ void expand_variables(t_command *command)
 	ex->input = command->tmp->input;
 	ex->new_input = malloc(4096);
 	if (!ex->new_input)
+	{
+		free(ex);
 		return;
+	}
 	ex->i = 0;
 	ex->j = 0;
 	ex->single_quote = 0;

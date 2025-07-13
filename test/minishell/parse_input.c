@@ -3,51 +3,44 @@
 /*                                                        :::      ::::::::   */
 /*   parse_input.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ican <<ican@student.42.fr>>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:37:12 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/13 13:07:49 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/13 14:07:55 by ican             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+
 void add_token(t_command *command, char *buffer)
 {
-	char **tmp;
-	int i = 0;
+    char **tmp;
+    int i = 0;
 
-	// Yeni token dizisi için yer ayır (eski + 1 yeni + NULL için 1)
-	tmp = malloc(sizeof(char *) * (command->token_count + 2));
-	if (!tmp)
+    tmp = malloc(sizeof(char *) * (command->token_count + 2));
+    if (!tmp)
+    {
+        perror("malloc failed");
+        exit(1);
+    }
+
+    while (i < command->token_count)
+    {
+        tmp[i] = command->tokens[i];
+        i++;
+    }
+
+    tmp[i++] = buffer;
+    tmp[i] = NULL;
+
+    if (command->tokens)
 	{
-		perror("malloc failed");
-		exit(1);
+        free(command->tokens);  // Önceki pointer dizisini free et
+		command->tokens = NULL;
 	}
-
-	// Eski token'ları yeni dizinin içine kopyala
-	while (i < command->token_count)
-	{
-		tmp[i] = command->tokens[i];
-		i++;
-	}
-
-	// Yeni token'ı ekle
-	tmp[i++] = buffer;
-	tmp[i] = NULL;
-
-	// Önceki token dizisi varsa ama içindekiler zaten tmp'ye aktarıldı
-	// sadece token dizisinin kendisini free() etmek yeterli olur
-	// if (command->tokens)
-	// {
-	// 	free(command->tokens);
-	// 	command -> tokens = NULL;
-	// }
-		
-//////////////////////////////////////////////////////
-/////////////////////////////////////////////////////
-	command->tokens = tmp;
-	command->token_count++;
+    command->tokens = tmp;
+    command->token_count++;
 }
 
 static void process_remaining_buffer(t_command *command, t_tokenizer *tk)
