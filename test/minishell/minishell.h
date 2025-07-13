@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:04:57 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/11 16:50:23 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/13 12:43:35 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,7 +129,7 @@ void free_env(char **env);
 void update_env(char ***envp, char *arg);
 void	execute_many_token(t_command *command);
 char	*path_finder(char *cmd, char **env);
-
+void sigint_handler(int sig);
 
 void    all_free(t_command *cmd);
 void clear_command_data(t_command *cmd);

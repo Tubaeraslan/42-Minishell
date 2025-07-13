@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 20:34:23 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/11 18:37:28 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/13 12:52:24 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,6 +95,19 @@ void reset_pipe_flags(t_command *command)
         command = command->next;
     }
 }
+void free_command_fields(t_command *command)
+{
+    if (command->cmd)
+    {
+        free(command->cmd);
+        command->cmd = NULL;
+    }
+    // Eğer varsa args, tokens, redirect vs. de temizlenmeli:
+    // free_args(command->args);
+    // free_tokens(command->tokens);
+    // free_redirects(command->redirects);
+    // vs.
+}
 
 void execute_commands(t_command *command)
 {
@@ -109,4 +122,5 @@ void execute_commands(t_command *command)
 	else
 		execute_many_token(command);
 	reset_pipe_flags(command);
+	free_command_fields(command);
 }

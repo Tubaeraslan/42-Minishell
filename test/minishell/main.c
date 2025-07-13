@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ican <<ican@student.42.fr>>                +#+  +:+       +#+        */
+/*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:04:40 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/12 17:44:11 by ican             ###   ########.fr       */
+/*   Updated: 2025/07/13 13:39:08 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,8 +53,8 @@ int main(int argc, char **argv, char **envp)
 
 	(void)argc;
 	(void)argv;
-	init_pointer(&command,&shell);
-	init_command(command,shell,envp);
+	init_pointer(&command, &shell);
+	init_command(command, shell, envp);
 	handle_signals();
 	while (1)
 	{
@@ -64,13 +64,28 @@ int main(int argc, char **argv, char **envp)
 			printf("exit\n");
 			break;
 		}
-		else
-			add_history(input);
-		command->tmp->input = input;
+		add_history(input);
+
+		// Eğer önceden bir input varsa serbest bırak
+		if (command->tmp->input)
+		{
+			free(command->tmp->input);
+			command->tmp->input = NULL;
+		}
+
+		// input'un kopyasını command->tmp->input'a ata
+		command->tmp->input = ft_strdup(input);
+		if (!command->tmp->input)
+		{
+			perror("ft_strdup");
+			free(input);
+			break;
+		}
+
 		parse_input(command);
-		printf("Debug: cmd->cmd = '%s'\n", command->cmd);
 		execute_commands(command);
-		all_free(command);
+
+		free(input);
 	}
 	return 0;
 }

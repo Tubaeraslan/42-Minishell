@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:13:40 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/02 13:27:09 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/13 13:16:36 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,4 +49,5 @@ void	ft_echo(t_command *cmd)
 	}
 	if (newline)
 		ft_putchar_fd('\n', 1);
+	cmd->last_exit_code = 0;
 }

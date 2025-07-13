@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_input.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ican <<ican@student.42.fr>>                +#+  +:+       +#+        */
+/*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:37:12 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/12 19:51:56 by ican             ###   ########.fr       */
+/*   Updated: 2025/07/13 13:07:49 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,11 +38,11 @@ void add_token(t_command *command, char *buffer)
 
 	// Önceki token dizisi varsa ama içindekiler zaten tmp'ye aktarıldı
 	// sadece token dizisinin kendisini free() etmek yeterli olur
-	if (command->tokens)
-	{
-		free(command->tokens);
-		command -> tokens = NULL;
-	}
+	// if (command->tokens)
+	// {
+	// 	free(command->tokens);
+	// 	command -> tokens = NULL;
+	// }
 		
 //////////////////////////////////////////////////////
 /////////////////////////////////////////////////////
