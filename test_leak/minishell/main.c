@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ican <<ican@student.42.fr>>                +#+  +:+       +#+        */
+/*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:04:40 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/13 15:53:39 by ican             ###   ########.fr       */
+/*   Updated: 2025/07/15 18:33:14 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ void init_command(t_command *command,t_data *shell,char **envp)
 	command->heredoc_fd = 0;
 	command->last_exit_code = 0;
 	command->parsing_error = 0;
+	command->error_printed = 0;
 	ft_bzero(&command->tokenizer, sizeof(t_tokenizer));
 }
 
@@ -83,9 +84,10 @@ int main(int argc, char **argv, char **envp)
 		}
 
 		parse_input(command);
+		//printf("%d\n",command->last_exit_code);
 		execute_commands(command);
 
-		all_free(command, shell);
+		//all_free(command, shell);
 		free(input);
 	}
 	return 0;

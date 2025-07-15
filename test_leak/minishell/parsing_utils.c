@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing_utils.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ican <<ican@student.42.fr>>                +#+  +:+       +#+        */
+/*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 20:26:09 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/12 19:22:58 by ican             ###   ########.fr       */
+/*   Updated: 2025/07/15 18:32:03 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,47 +14,83 @@
 
 int handle_infile(t_command *command, char **tokens, int *i)
 {
-	char *filename = tokens[*i + 1];
-	if (access(filename, R_OK) != 0)
-	{
-		command->last_exit_code = 1;
-		return -1;
-	}
-	if (command->infile)
-	{
-		free(command->infile);
-		command->infile = NULL;
-	}
-	command->infile = ft_strdup(tokens[*i + 1]);
-	*i += 2;
-	return 1;
+    char *filename = tokens[*i + 1];
+
+    if (access(filename, R_OK) != 0)
+    {
+        if (!command->error_printed)
+        {
+            ft_putstr_fd("minishell: ", 2);
+            ft_putstr_fd(filename, 2);
+            ft_putstr_fd(": No such file or directory\n", 2);
+            command->error_printed = 1;
+        }
+        command->parsing_error = 1;
+        command->last_exit_code = 1;
+        return -1;
+    }
+
+    if (command->infile)
+    {
+        free(command->infile);
+        command->infile = NULL;
+    }
+    command->infile = ft_strdup(filename);
+    *i += 2;
+    return 1;
 }
 
 int handle_outfile(t_command *command, char **tokens, int *i, int append)
 {
-	char *filename = tokens[*i + 1];
-	int fd;
+    int fd;
+    char *filename;
 
-	// Dosyayı oluştur (bash gibi)
-	fd = open(filename, O_CREAT | O_TRUNC | O_WRONLY, 0644);
-	if (fd < 0)
-	{
-		//perror("open failed");
-		command->last_exit_code = 1;
-		return -1;
-	}
-	close(fd); // Dosyayı sadece oluştur ve kapa
+    if (!tokens[*i + 1])
+    {
+        if (!command->error_printed)
+        {
+            ft_putstr_fd("minishell: syntax error near unexpected token `newline'\n", 2);
+            command->error_printed = 1;
+        }
+        command->parsing_error = 1;
+        command->last_exit_code = 2;
+        return -1;
+    }
 
-	// Önceki outfile varsa free et
-	if (command->outfile)
-	{
-		free(command->outfile);
-		command->outfile = NULL;
-	}// Yeni outfile ayarla
-	command->outfile = ft_strdup(filename);
-	command->is_append = append;
-	*i += 2;
-	return 1;
+    filename = tokens[*i + 1];
+
+    if (append)
+        fd = open(filename, O_WRONLY | O_CREAT | O_APPEND, 0644);
+    else
+        fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+
+    if (fd < 0)
+    {
+        if (!command->error_printed)
+        {
+            ft_putstr_fd("minishell: ", 2);
+            ft_putstr_fd(filename, 2);
+            ft_putstr_fd(": ", 2);
+            ft_putstr_fd(strerror(errno), 2);
+            ft_putstr_fd("\n", 2);
+            command->error_printed = 1;
+        }
+        command->parsing_error = 1;
+        command->last_exit_code = 1;
+        return -1;
+    }
+    close(fd);
+
+    if (command->outfile)
+    {
+        free(command->outfile);
+        command->outfile = NULL;
+    }
+
+    command->outfile = ft_strdup(filename);
+    command->is_append = append;
+    *i += 2;
+    return 1;
 }
 
 

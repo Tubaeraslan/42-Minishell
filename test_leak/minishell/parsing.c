@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ican <<ican@student.42.fr>>                +#+  +:+       +#+        */
+/*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 20:19:32 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/13 17:24:00 by ican             ###   ########.fr       */
+/*   Updated: 2025/07/15 18:33:36 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ void clear_command_data(t_command *cmd)
         free(cmd->heredoc_limiter);
         cmd->heredoc_limiter = NULL;
     }
-	free_data(cmd->tmp);
+	//free_data(cmd->tmp);
 	cmd->is_pipe = 0;
 	cmd->heredoc_fd = 0;
 	cmd->is_heredoc = 0;
@@ -78,8 +78,9 @@ void parsing(t_command *command)
 	int i = 0;
 	int count = 0;
 	char **tmp_args;
-	int error_printed = 0;
+	//int error_printed = 0;
 
+	command->error_printed = 0;
 	command->parsing_error = 0;
 	clear_command_data(command);
 	tmp_args = alloc_args(command->token_count);
@@ -96,15 +97,15 @@ void parsing(t_command *command)
 			continue;
 		else if (redirect_result == -1){
 			command->parsing_error = 1;
-			if (!error_printed)
-			{
-				ft_putstr_fd("minishell: ", 2);
-				if (command->tokens[i + 1]) // varsa dosya adı
-					perror(command->tokens[i + 1]);
-				else
-					perror("missing file"); // ya da uygun dosya adını gönder
-			error_printed = 1;
-			}
+			// if (!error_printed)
+			// {
+			// 	ft_putstr_fd("minishell: ", 2);
+			// 	if (command->tokens[i + 1]) // varsa dosya adı
+			// 		perror(command->tokens[i + 1]);
+			// 	else
+			// 		perror("missing file"); // ya da uygun dosya adını gönder
+			// error_printed = 1;
+			// }
 			command->last_exit_code = 1;
 			i++;
 			continue;

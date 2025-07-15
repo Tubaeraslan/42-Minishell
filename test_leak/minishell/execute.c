@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ican <<ican@student.42.fr>>                +#+  +:+       +#+        */
+/*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 20:34:23 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/13 14:44:58 by ican             ###   ########.fr       */
+/*   Updated: 2025/07/15 18:10:52 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,16 +111,18 @@ void free_command_fields(t_command *command)
 
 void execute_commands(t_command *command)
 {
-	if (!command || command->token_count == 0)
-		return ;
+    if (!command || command->token_count == 0)
+        return;
 
-	if (!command->is_pipe)
-	{
-		if (!command->parsing_error)
-			execute_a_token(command);
-	}
-	else
-		execute_many_token(command);
-	reset_pipe_flags(command);
-	free_command_fields(command);
+    if (!command->is_pipe)
+    {
+        if (!command->parsing_error)
+            execute_a_token(command);
+    }
+    else
+    {
+        command->last_exit_code = execute_many_token(command);
+    }
+    reset_pipe_flags(command);
+    free_command_fields(command);
 }

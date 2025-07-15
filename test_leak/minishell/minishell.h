@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ican <<ican@student.42.fr>>                +#+  +:+       +#+        */
+/*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:04:57 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/13 16:15:40 by ican             ###   ########.fr       */
+/*   Updated: 2025/07/15 18:10:36 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,6 +84,7 @@ typedef struct s_command
 	int is_pipe;
 	int last_exit_code;
 	int parsing_error;
+	int error_printed;
 	t_tokenizer tokenizer;
 }	t_command;
 
@@ -127,7 +128,7 @@ int is_valid(char *str);
 char	**sort_env(char **env);
 void free_env(char **env);
 void update_env(char ***envp, char *arg);
-void	execute_many_token(t_command *command);
+int	execute_many_token(t_command *command);
 char	*path_finder(char *cmd, char **env);
 void sigint_handler(int sig);
 
