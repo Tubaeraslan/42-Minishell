@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:04:57 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/15 18:10:36 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/16 14:12:44 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,6 +131,8 @@ void update_env(char ***envp, char *arg);
 int	execute_many_token(t_command *command);
 char	*path_finder(char *cmd, char **env);
 void sigint_handler(int sig);
+int	get_oldpwd(t_command *cmd, char *cwd, size_t c_size, char **oldpwd);
+int	get_path(t_command *cmd, char **path);
 
 void free_two_dimension(char **arg);
 void all_free(t_command *comd, t_data *shell);

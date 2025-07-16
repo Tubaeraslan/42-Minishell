@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:27:50 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/01 18:26:19 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/16 14:29:19 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,55 +14,59 @@
 
 static int	env_len(char **env)
 {
-	int i = 0;
+	int	i;
+
+	i = 0;
 	while (env && env[i])
 		i++;
 	return (i);
 }
 
-static void	swap(char **a, char **b)
+static void	bubble_sort(char **arr, int len)
 {
-	char *tmp = *a;
-	*a = *b;
-	*b = tmp;
+	int		i;
+	int		j;
+	char	*tmp;
+	size_t	n;
+
+	i = 0;
+	while (i < len - 1)
+	{
+		j = 0;
+		while (j < len - i - 1)
+		{
+			n = ft_strlen(arr[j]);
+			if (ft_strlen(arr[j + 1]) > n)
+				n = ft_strlen(arr[j + 1]);
+			if (ft_strncmp(arr[j], arr[j + 1], n + 1) > 0)
+			{
+				tmp = arr[j];
+				arr[j] = arr[j + 1];
+				arr[j + 1] = tmp;
+			}
+			j++;
+		}
+		i++;
+	}
 }
 
 char	**sort_env(char **env)
 {
-	int		len = env_len(env);
+	int		len;
 	char	**sorted;
-	int		i, j;
 
-	// Ortamın kopyasını oluştur
-	sorted = (char **)malloc(sizeof(char *) * (len + 1));
+	len = env_len(env);
+	sorted = ft_env_dup(env);
 	if (!sorted)
 		return (NULL);
-
-	i = 0;
-	while (i < len)
-	{
-		sorted[i] = ft_strdup(env[i]);
-		i++;
-	}
-	sorted[i] = NULL;
-
-	// Basit bubble sort (küçük veri için yeterli)
-	for (i = 0; i < len - 1; i++)
-	{
-		for (j = 0; j < len - i - 1; j++)
-		{
-			if (ft_strncmp(sorted[j], sorted[j + 1], ft_strlen(sorted[j]) + 1) > 0)
-				swap(&sorted[j], &sorted[j + 1]);
-		}
-	}
-
+	bubble_sort(sorted, len);
 	return (sorted);
 }
 
-char **ft_env_dup(char **envp)
+char	**ft_env_dup(char **envp)
 {
-	int i;
-	char **env_copy;
+	int		i;
+	char	**env_copy;
 
 	i = 0;
 	while (envp && envp[i])
@@ -80,16 +84,18 @@ char **ft_env_dup(char **envp)
 	return (env_copy);
 }
 
-char *get_env_value(char **env, char *key)
+char	*get_env_value(char **env, char *key)
 {
-	int i = 0;
-	size_t key_len = ft_strlen(key);
+	int		i;
+	size_t	key_len;
 
+	i = 0;
+	key_len = ft_strlen(key);
 	while (env[i])
 	{
 		if (ft_strncmp(env[i], key, key_len) == 0 && env[i][key_len] == '=')
-			return env[i] + key_len + 1; // '=' den sonrası value
+			return (env[i] + key_len + 1);
 		i++;
 	}
-	return NULL;
+	return (NULL);
 }

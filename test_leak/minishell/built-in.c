@@ -6,16 +6,17 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:06:18 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/10 15:16:22 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/16 13:47:25 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int is_valid(char *str)
+int	is_valid(char *str)
 {
-	int i = 0;
+	int	i;
 
+	i = 0;
 	if (!str || !(ft_isalpha(str[0]) || str[0] == '_'))
 		return (0);
 	while (str[i] && str[i] != '=')
@@ -29,34 +30,35 @@ int is_valid(char *str)
 
 void	execute_builtin_with_redir(t_command *command)
 {
-	int saved_stdin = dup(STDIN_FILENO);
-	int saved_stdout = dup(STDOUT_FILENO);
+	int	saved_stdin;
+	int	saved_stdout;
 
+	saved_stdin = dup(STDIN_FILENO);
+	saved_stdout = dup(STDOUT_FILENO);
 	handle_redirections(command);
 	execute_built(command);
-
 	dup2(saved_stdin, STDIN_FILENO);
 	dup2(saved_stdout, STDOUT_FILENO);
 	close(saved_stdin);
 	close(saved_stdout);
 }
 
-char *get_basename(char *path)
+char	*get_basename(char *path)
 {
-	char *slash;
+	char	*slash;
 
 	if (!path)
 		return (NULL);
 	slash = ft_strrchr(path, '/');
 	if (slash)
-		return (slash + 1); // son /'den sonrası
+		return (slash + 1);
 	return (path);
 }
 
 int	is_built(char *arg)
 {
-	char *cmd;
-	int len;
+	char	*cmd;
+	int		len;
 
 	if (!arg)
 		return (0);
@@ -81,10 +83,10 @@ int	is_built(char *arg)
 	return (0);
 }
 
-void execute_built(t_command *cmd)
+void	execute_built(t_command *cmd)
 {
-	char *cmd_name;
-	int len;
+	char	*cmd_name;
+	int		len;
 
 	if (!cmd || !cmd->cmd)
 		return ;
@@ -109,5 +111,3 @@ void execute_built(t_command *cmd)
 	else if (ft_strncmp(cmd_name, "cd", 3) == 0)
 		ft_cd(cmd);
 }
-
-

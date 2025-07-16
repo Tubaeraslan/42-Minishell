@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ican <<ican@student.42.fr>>                +#+  +:+       +#+        */
+/*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 19:24:49 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/13 15:43:12 by ican             ###   ########.fr       */
+/*   Updated: 2025/07/16 14:41:35 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,7 @@ void expand_variable_from_env(t_expand *ex, t_command *command)
     ex->i++;
     char varname[256];
     int k = 0;
-
-    // Eğer '?' geliyorsa özel durum: exit code
+	
     if (ex->input[ex->i] == '?')
     {
         char *exit_str = ft_itoa(command->last_exit_code);
@@ -29,8 +28,6 @@ void expand_variable_from_env(t_expand *ex, t_command *command)
         ex->i++; // '?' karakterini atla
         return;
     }
-
-    // Alfanümerik veya _ karakterlerinden oluşan değişken adı oku
     while (ex->input[ex->i] && (ft_isalnum(ex->input[ex->i]) || ex->input[ex->i] == '_'))
         varname[k++] = ex->input[ex->i++];
     varname[k] = '\0';

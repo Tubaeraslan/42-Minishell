@@ -6,13 +6,13 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:04:40 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/15 18:33:14 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/16 15:00:08 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void init_command(t_command *command,t_data *shell,char **envp)
+void	init_command(t_command *command, t_data *shell, char **envp)
 {
 	command->tmp = shell;
 	command->tmp->input = NULL;
@@ -36,7 +36,7 @@ void init_command(t_command *command,t_data *shell,char **envp)
 	ft_bzero(&command->tokenizer, sizeof(t_tokenizer));
 }
 
-static void init_pointer(t_command **command, t_data **shell)
+static void	init_pointer(t_command **command, t_data **shell)
 {
 	*shell = malloc(sizeof(t_data));
 	if (!*shell)
@@ -46,11 +46,36 @@ static void init_pointer(t_command **command, t_data **shell)
 		exit(1);
 }
 
-int main(int argc, char **argv, char **envp)
+static int	read_and_prepare_input(t_command *command)
 {
-	char *input;
-	t_data *shell;
-	t_command *command;
+	char	*input;
+
+	input = readline("minishell$ ");
+	if (!input)
+	{
+		printf("exit\n");
+		return (1);
+	}
+	add_history(input);
+	if (command->tmp->input)
+	{
+		free(command->tmp->input);
+		command->tmp->input = NULL;
+	}
+	command->tmp->input = ft_strdup(input);
+	free(input);
+	if (!command->tmp->input)
+	{
+		perror("ft_strdup");
+		return (1);
+	}
+	return (0);
+}
+
+int	main(int argc, char **argv, char **envp)
+{
+	t_data		*shell;
+	t_command	*command;
 
 	(void)argc;
 	(void)argv;
@@ -59,36 +84,10 @@ int main(int argc, char **argv, char **envp)
 	handle_signals();
 	while (1)
 	{
-		input = readline("minishell$ ");
-		if (!input)
-		{
-			printf("exit\n");
-			break;
-		}
-		add_history(input);
-
-		// Eğer önceden bir input varsa serbest bırak
-		if (command->tmp->input)
-		{
-			free(command->tmp->input);
-			command->tmp->input = NULL;
-		}
-
-		// input'un kopyasını command->tmp->input'a ata
-		command->tmp->input = ft_strdup(input);
-		if (!command->tmp->input)
-		{
-			perror("ft_strdup");
-			free(input);
-			break;
-		}
-
+		if (read_and_prepare_input(command))
+			break ;
 		parse_input(command);
-		//printf("%d\n",command->last_exit_code);
 		execute_commands(command);
-
-		//all_free(command, shell);
-		free(input);
 	}
-	return 0;
+	return (0);
 }

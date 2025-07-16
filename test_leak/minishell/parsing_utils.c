@@ -6,38 +6,66 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 20:26:09 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/15 18:32:03 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/16 13:10:21 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int handle_infile(t_command *command, char **tokens, int *i)
+int	handle_infile(t_command *cmd, char **tokens, int *i)
 {
-    char *filename = tokens[*i + 1];
+	char	*filename;
 
-    if (access(filename, R_OK) != 0)
-    {
-        if (!command->error_printed)
-        {
-            ft_putstr_fd("minishell: ", 2);
-            ft_putstr_fd(filename, 2);
-            ft_putstr_fd(": No such file or directory\n", 2);
-            command->error_printed = 1;
-        }
-        command->parsing_error = 1;
-        command->last_exit_code = 1;
-        return -1;
-    }
+	/* `<`’ten sonra kelime gelmezse */
+	if (!tokens[*i + 1])
+	{
+		if (!cmd->error_printed)
+		{
+			ft_putstr_fd("minishell: syntax error near unexpected token `newline'\n", 2);
+			cmd->error_printed = 1;
+		}
+		cmd->parsing_error = 1;
+		cmd->last_exit_code = 2;
+		return (-1);
+	}
 
-    if (command->infile)
-    {
-        free(command->infile);
-        command->infile = NULL;
-    }
-    command->infile = ft_strdup(filename);
-    *i += 2;
-    return 1;
+	filename = tokens[*i + 1];
+
+	/* 1) Dosya var mı? */
+	if (access(filename, F_OK) != 0)
+	{
+		if (!cmd->error_printed)
+		{
+			ft_putstr_fd("minishell: ", 2);
+			ft_putstr_fd(filename, 2);
+			ft_putstr_fd(": No such file or directory\n", 2);
+			cmd->error_printed = 1;
+		}
+		cmd->parsing_error   = 1;
+		cmd->last_exit_code  = 1;
+		return (-1);
+	}
+
+	/* 2) Okuma izni var mı? */
+	if (access(filename, R_OK) != 0)
+	{
+		if (!cmd->error_printed)
+		{
+			ft_putstr_fd("minishell: ", 2);
+			ft_putstr_fd(filename, 2);
+			ft_putstr_fd(": Permission denied\n", 2);
+			cmd->error_printed = 1;
+		}
+		cmd->parsing_error   = 1;
+		cmd->last_exit_code  = 1;
+		return (-1);
+	}
+
+	/* Önceki infile varsa temizle */
+	free(cmd->infile);
+	cmd->infile = ft_strdup(filename);
+	*i += 2;
+	return (1);
 }
 
 int handle_outfile(t_command *command, char **tokens, int *i, int append)

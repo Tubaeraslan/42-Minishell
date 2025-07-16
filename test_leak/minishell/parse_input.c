@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_input.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ican <<ican@student.42.fr>>                +#+  +:+       +#+        */
+/*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:37:12 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/13 14:07:55 by ican             ###   ########.fr       */
+/*   Updated: 2025/07/16 15:00:20 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,6 @@ void parse_input(t_command *command)
 {
 	if (!command->tmp->input || command->tmp->input[0] == '\0')
 		return;
-
 	if (is_valid_syntax(command->tmp->input) == 0)
 	{
 		printf("syntax error: unclosed quote\n");
@@ -106,7 +105,6 @@ void parse_input(t_command *command)
 		command->last_exit_code = 2;
 		return;
 	}
-
 	if (check_pipe(command->tmp->input) == 0)
 	{
 		printf("syntax error near unexpected token `|'\n");
@@ -114,7 +112,6 @@ void parse_input(t_command *command)
 		command->last_exit_code = 2;
 		return;
 	}
-
 	if (check_redirects(command->tmp->input) == 0)
 	{
 		printf("syntax error near unexpected token `newline'\n");

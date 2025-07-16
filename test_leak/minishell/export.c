@@ -6,16 +6,17 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:17:14 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/02 14:42:05 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/16 14:46:30 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static void print_declare_line(char *env)
+static void	print_declare_line(char *env)
 {
-	int i = 0;
+	int	i;
 
+	i = 0;
 	while (env[i] && env[i] != '=')
 		write(1, &env[i++], 1);
 	if (env[i] == '=')
@@ -27,48 +28,57 @@ static void print_declare_line(char *env)
 	write(1, "\n", 1);
 }
 
-static void print_env_sorted(char **envp)
+static void	print_env_sorted(char **envp)
 {
-	char **sorted = sort_env(envp); // alfabetik sırala
-	int i = 0;
+	char	**sorted;
+	int		i;
 
+	sorted = sort_env(envp);
+	i = 0;
 	while (sorted[i])
 	{
 		ft_putstr_fd("declare -x ", 1);
 		print_declare_line(sorted[i]);
 		i++;
 	}
-	//free_env(sorted); // malloc'la kopyalanmışsa freele
+	free_env(sorted);
 }
 
-void ft_export(t_command *cmd)
+static int	ft_export_handle_arg(t_command *cmd, char *arg)
 {
-    int i = 1;
-    int error_flag = 0;
+	if (!is_valid(arg))
+	{
+		ft_putstr_fd("minishell: export: `", 2);
+		ft_putstr_fd(arg, 2);
+		ft_putstr_fd("': not a valid identifier\n", 2);
+		return (1);
+	}
+	if (ft_strchr(arg, '='))
+		update_env(&cmd->tmp->env, arg);
+	return (0);
+}
 
-    if (!cmd->args[i]) // argüman yoksa sıralı env göster
-    {
-        print_env_sorted(cmd->tmp->env);
-        cmd->last_exit_code = 0; // başarı
-        return;
-    }
+void	ft_export(t_command *cmd)
+{
+	int		i;
+	int		error_flag;
 
-    while (cmd->args[i])
-    {
-        if (!is_valid(cmd->args[i]))
-        {
-            ft_putstr_fd("minishell: export: `", 2);
-            ft_putstr_fd(cmd->args[i], 2);
-            ft_putstr_fd("': not a valid identifier\n", 2);
-            error_flag = 1;
-        }
-        else
-        {
-            if (ft_strchr(cmd->args[i], '='))
-                update_env(&cmd->tmp->env, cmd->args[i]);
-        }
-        i++;
-    }
-
-    cmd->last_exit_code = error_flag ? 1 : 0;
+	i = 1;
+	error_flag = 0;
+	if (!cmd->args[i])
+	{
+		print_env_sorted(cmd->tmp->env);
+		cmd->last_exit_code = 0;
+		return ;
+	}
+	while (cmd->args[i])
+	{
+		if (ft_export_handle_arg(cmd, cmd->args[i]))
+			error_flag = 1;
+		i++;
+	}
+	if (error_flag)
+		cmd->last_exit_code = 1;
+	else
+		cmd->last_exit_code = 0;
 }

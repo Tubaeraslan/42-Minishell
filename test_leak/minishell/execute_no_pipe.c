@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 20:42:34 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/13 13:15:33 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/16 13:44:49 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,23 +19,18 @@ void	execute_a_token(t_command *command)
 
 	if (!command || !command->cmd)
 		return ;
-
 	if (command->is_heredoc)
 		setup_heredoc(command);
-
 	if (is_built(command->cmd) == 1)
 	{
 		execute_builtin_with_redir(command);
 		return ;
 	}
-	// signal(SIGINT, SIG_IGN);
-	// signal(SIGQUIT, SIG_IGN);
 	pid = fork();
 	if (pid == -1)
 		handle_fork_error();
-	else if (pid == 0){
-		// signal(SIGINT, SIG_DFL);
-		// signal(SIGQUIT, SIG_DFL);
+	else if (pid == 0)
+	{
 		execute_child_process(command);
 		exit(EXIT_FAILURE);
 	}
