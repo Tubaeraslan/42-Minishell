@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_input.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ican <<ican@student.42.fr>>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:37:12 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/19 13:33:34 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/19 19:42:20 by ican             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,14 +26,19 @@ void	add_token(t_command *command, char *buffer)
 	}
 	while (i < command->token_count)
 	{
-		tmp[i] = command->tokens[i];
+		tmp[i] = ft_strdup(command->tokens[i]);
 		i++;
 	}
 	tmp[i++] = buffer;
 	tmp[i] = NULL;
 	if (command->tokens)
 	{
-		free(command->tokens);
+		for (int j = 0; j < command->token_count; j++)
+		{
+			free(command->tokens[j]);  // içteki strdup edilmiş string'leri sil
+			command->tokens[j] = NULL;
+		}
+		free(command->tokens);        // sonra diziyi sil
 		command->tokens = NULL;
 	}
 	command->tokens = tmp;

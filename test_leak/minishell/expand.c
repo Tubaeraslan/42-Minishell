@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ican <<ican@student.42.fr>>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 19:24:49 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/19 13:22:16 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/19 18:01:16 by ican             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,5 +105,6 @@ void	expand_variables(t_command *command)
 	free(command->tmp->input);
 	command->tmp->input = ft_strdup(ex->new_input);
 	free(ex->new_input);
+	ex->new_input = NULL;
 	free(ex);
 }

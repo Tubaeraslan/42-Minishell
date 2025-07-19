@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing_utils.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ican <<ican@student.42.fr>>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 20:26:09 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/19 13:46:56 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/19 20:29:28 by ican             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,29 +15,38 @@
 int	handle_infile(t_command *cmd, char **tokens, int *i)
 {
 	char	*filename;
+	char	*dup;
 
 	if (!tokens[*i + 1])
-		return (infile_error(cmd, NULL,
-				"syntax error near unexpected token `newline'\n", 2));
+		return infile_error(cmd, NULL, "syntax error near unexpected token `newline'\n", 2);
+
 	filename = tokens[*i + 1];
 	if (access(filename, F_OK) != 0)
-		return (infile_error(cmd, filename, ": No such file or directory\n", 1));
+		return infile_error(cmd, filename, ": No such file or directory\n", 1);
 	if (access(filename, R_OK) != 0)
-		return (infile_error(cmd, filename, ": Permission denied\n", 1));
+		return infile_error(cmd, filename, ": Permission denied\n", 1);
+
+	dup = ft_strdup(filename);
+	if (!dup)
+		return infile_error(cmd, filename, ": memory allocation failed\n", 1);
+
 	free(cmd->infile);
-	cmd->infile = ft_strdup(filename);
+	cmd->infile = dup;
 	*i += 2;
-	return (1);
+	return 1;
 }
+
 
 int	handle_outfile(t_command *command, char **tokens, int *i, int append)
 {
 	int		fd;
 	char	*filename;
+	char	*dup;
 
 	if (!tokens[*i + 1])
 		return (outfile_error(command, NULL,
 				"syntax error near unexpected token `newline'\n", 2));
+
 	filename = tokens[*i + 1];
 	if (append)
 		fd = open(filename, O_WRONLY | O_CREAT | O_APPEND, 0644);
@@ -46,12 +55,11 @@ int	handle_outfile(t_command *command, char **tokens, int *i, int append)
 	if (fd < 0)
 		return (outfile_error(command, filename, strerror(errno), 1));
 	close(fd);
-	if (command->outfile)
-	{
-		free(command->outfile);
-		command->outfile = NULL;
-	}
-	command->outfile = ft_strdup(filename);
+	dup = ft_strdup(filename);
+	if (!dup)
+		return (outfile_error(command, filename, ": memory allocation failed", 1));
+	free(command->outfile);
+	command->outfile = dup;
 	command->is_append = append;
 	*i += 2;
 	return (1);
@@ -104,14 +112,19 @@ t_command	*create_next_command(t_command *command, char **tokens, int index)
 
 void	update_args_and_cmd(t_command *command, char **args, int count)
 {
-	command->args = args;
-	if (command->cmd)
-	{
-		free(command->cmd);
-		command->cmd = NULL;
-	}
-	if (count > 0 && args && args[0])
-		command->cmd = ft_strdup(args[0]);
-	else
-		command->cmd = NULL;
+    if (command->args)
+    {
+        free_two_dimension(command->args);
+        command->args = NULL;
+    }
+    command->args = args;
+    if (command->cmd)
+    {
+        free(command->cmd);
+        command->cmd = NULL;
+    }
+    if (count > 0 && args && args[0])
+        command->cmd = ft_strdup(args[0]);
+    else
+        command->cmd = NULL;
 }

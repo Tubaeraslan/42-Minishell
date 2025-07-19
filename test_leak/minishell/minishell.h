@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ican <<ican@student.42.fr>>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:04:57 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/19 13:55:25 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/19 15:39:57 by ican             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,11 @@ typedef struct s_tokenizer
 	const char *src;
 }	t_tokenizer;
 
+typedef struct s_GarbageCollector
+{
+
+}	s_GarbageCollector;
+
 typedef struct s_command
 {
 	char **tokens; //["ls" , "-l", "cat", "hello","|"]
@@ -86,6 +91,7 @@ typedef struct s_command
 	int parsing_error;
 	int error_printed;
 	t_tokenizer tokenizer;
+	s_GarbageCollector collector;
 }	t_command;
 
 
