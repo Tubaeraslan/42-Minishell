@@ -6,44 +6,41 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:37:12 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/16 15:00:20 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/19 13:33:34 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-
-void add_token(t_command *command, char *buffer)
+void	add_token(t_command *command, char *buffer)
 {
-    char **tmp;
-    int i = 0;
+	char	**tmp;
+	int		i;
 
-    tmp = malloc(sizeof(char *) * (command->token_count + 2));
-    if (!tmp)
-    {
-        perror("malloc failed");
-        exit(1);
-    }
-
-    while (i < command->token_count)
-    {
-        tmp[i] = command->tokens[i];
-        i++;
-    }
-
-    tmp[i++] = buffer;
-    tmp[i] = NULL;
-
-    if (command->tokens)
+	i = 0;
+	tmp = malloc(sizeof(char *) * (command->token_count + 2));
+	if (!tmp)
 	{
-        free(command->tokens);  // Önceki pointer dizisini free et
+		perror("malloc failed");
+		exit(1);
+	}
+	while (i < command->token_count)
+	{
+		tmp[i] = command->tokens[i];
+		i++;
+	}
+	tmp[i++] = buffer;
+	tmp[i] = NULL;
+	if (command->tokens)
+	{
+		free(command->tokens);
 		command->tokens = NULL;
 	}
-    command->tokens = tmp;
-    command->token_count++;
+	command->tokens = tmp;
+	command->token_count++;
 }
 
-static void process_remaining_buffer(t_command *command, t_tokenizer *tk)
+static void	process_remaining_buffer(t_command *command, t_tokenizer *tk)
 {
 	if (tk->j > 0)
 	{
@@ -53,11 +50,14 @@ static void process_remaining_buffer(t_command *command, t_tokenizer *tk)
 	}
 }
 
-static void process_char(t_tokenizer *tk, t_command *command)
+static void	process_char(t_tokenizer *tk, t_command *command)
 {
-	const char *src = tk->src;
-	int *i = &tk->i;
+	const char	*src;
+	int			*i;
+	int			len;
 
+	src = tk->src;
+	i = &tk->i;
 	if (src[*i] == '\'' || src[*i] == '"')
 	{
 		if (process_quotes(tk))
@@ -69,58 +69,52 @@ static void process_char(t_tokenizer *tk, t_command *command)
 		(*i)++;
 		return ;
 	}
-	else if (!tk->inside_quotes && (src[*i] == '>' || src[*i] == '<' || src[*i] == '|'))
+	else if (!tk->inside_quotes && (src[*i] == '>'
+			|| src[*i] == '<' || src[*i] == '|'))
 	{
-		int len = process_operator(command, tk);
+		len = process_operator(command, tk);
 		(*i) += len;
 		return ;
 	}
 	tk->buffer[(tk->j)++] = src[(*i)++];
 }
 
-static void token(t_command *command)
+static void	token(t_command *command)
 {
-	t_tokenizer *tk = &command->tokenizer;
+	t_tokenizer	*tk;
 
+	tk = &command->tokenizer;
 	clear_tokens(command);
 	tk->i = 0;
 	tk->j = 0;
 	tk->inside_quotes = 0;
 	tk->char_quote = 0;
 	tk->src = command->tmp->input;
-
 	while (tk->src[tk->i])
 		process_char(tk, command);
 	process_remaining_buffer(command, tk);
 }
 
-void parse_input(t_command *command)
+void	parse_input(t_command *command)
 {
 	if (!command->tmp->input || command->tmp->input[0] == '\0')
-		return;
+		return ;
 	if (is_valid_syntax(command->tmp->input) == 0)
 	{
-		printf("syntax error: unclosed quote\n");
-		command->parsing_error = 1;
-		command->last_exit_code = 2;
-		return;
+		parse_error(command, "syntax error: unclosed quote");
+		return ;
 	}
 	if (check_pipe(command->tmp->input) == 0)
 	{
-		printf("syntax error near unexpected token `|'\n");
-		command->parsing_error = 1;
-		command->last_exit_code = 2;
-		return;
+		parse_error(command, "syntax error near unexpected token `|'");
+		return ;
 	}
 	if (check_redirects(command->tmp->input) == 0)
 	{
-		printf("syntax error near unexpected token `newline'\n");
-		command->parsing_error = 1;
-		command->last_exit_code = 2;
-		return;
+		parse_error(command, "syntax error near unexpected token `newline'");
+		return ;
 	}
 	expand_variables(command);
 	token(command);
 	parsing(command);
 }
-

@@ -9,7 +9,7 @@ LIBFT = $(LIBFT_DIR)/libft.a
 SRC = main.c signal.c env_function.c parse_input.c pipe_syntax.c syntax_check.c expand.c \
 		lexer.c parsing.c parsing_utils.c execute.c execute_utils.c execute_no_pipe.c \
 		built-in.c cd.c echo.c env.c exit.c export.c pwd.c unset.c env_utils.c \
-		execute_with_pipe.c all_free_st.c cd_utils.c
+		execute_with_pipe.c all_free_st.c cd_utils.c child_utils.c parse_function.c
 OBJ = $(SRC:.c=.o)
 
 all:$(LIBFT) $(NAME)

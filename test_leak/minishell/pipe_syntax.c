@@ -6,13 +6,13 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:38:59 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/11 14:15:04 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/19 13:16:24 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static int is_in_quotes(char c, int *single_flag, int *double_flag)
+static int	is_in_quotes(char c, int *single_flag, int *double_flag)
 {
 	if (c == '\'' && *double_flag == 0)
 		*single_flag = !(*single_flag);
@@ -55,26 +55,26 @@ static int	is_invalid_pipe(char *input)
 		}
 		i++;
 	}
-	return 0;
+	return (0);
 }
 
-static int ends_with_pipe(char *input)
+static int	ends_with_pipe(char *input)
 {
-	int i;
+	int	i;
 
 	i = ft_strlen(input) -1;
 	while (i >= 0 && input[i] == ' ')
 		i--;
 	if (i >= 0 && input[i] == '|')
-		return 1;
-	return 0;
+		return (1);
+	return (0);
 }
 
-int check_pipe(char *input)
+int	check_pipe(char *input)
 {
 	if (is_invalid_pipe(input))
-		return 0;
+		return (0);
 	if (ends_with_pipe(input))
-		return 0;
-	return 1;
+		return (0);
+	return (1);
 }
