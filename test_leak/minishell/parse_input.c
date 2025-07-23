@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_input.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ican <<ican@student.42.fr>>                +#+  +:+       +#+        */
+/*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:37:12 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/19 19:42:20 by ican             ###   ########.fr       */
+/*   Updated: 2025/07/23 17:55:38 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,10 +100,44 @@ static void	token(t_command *command)
 	process_remaining_buffer(command, tk);
 }
 
+char	*get_heredoc_limiter(char *input)
+{
+	char	**tokens = ft_split(input, ' ');
+	int		i = 0;
+	char	*limiter = NULL;
+
+	while (tokens[i])
+	{
+		if (strcmp(tokens[i], "<<") == 0 && tokens[i + 1])
+		{
+			limiter = ft_strdup(tokens[i + 1]);
+			break ;
+		}
+		i++;
+	}
+	//ft_free_split(tokens); // belleği temizle
+	return (limiter);
+}
+
+int	has_heredoc(char *input)
+{
+	return (ft_strnstr(input, "<<", ft_strlen(input)) != NULL);
+}
+
 void	parse_input(t_command *command)
 {
 	if (!command->tmp->input || command->tmp->input[0] == '\0')
 		return ;
+
+	// Heredoc varsa önce oku
+	if (has_heredoc(command->tmp->input))
+	{
+		command->heredoc_limiter = get_heredoc_limiter(command->tmp->input); // "< <EOF" gibi kısımdan limiter al
+		if (command->heredoc_limiter)
+			setup_heredoc(command);
+	}
+
+	// Sonra syntax hatalarına bak
 	if (is_valid_syntax(command->tmp->input) == 0)
 	{
 		parse_error(command, "syntax error: unclosed quote");
@@ -119,6 +153,7 @@ void	parse_input(t_command *command)
 		parse_error(command, "syntax error near unexpected token `newline'");
 		return ;
 	}
+
 	expand_variables(command);
 	token(command);
 	parsing(command);
