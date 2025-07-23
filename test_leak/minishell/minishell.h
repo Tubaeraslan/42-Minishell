@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:04:57 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/23 17:53:00 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/23 19:09:47 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,8 @@
 # include <fcntl.h>
 # include <errno.h>
 # include <sys/stat.h>
+
+extern int g_signal_status;
 
 typedef struct s_data
 {

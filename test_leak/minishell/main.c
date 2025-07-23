@@ -6,11 +6,13 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:04:40 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/23 17:52:53 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/23 19:33:35 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+int g_signal_status = 0;
 
 void	init_command(t_command *command, t_data *shell, char **envp)
 {
@@ -87,6 +89,11 @@ int	main(int argc, char **argv, char **envp)
 	{
 		if (read_and_prepare_input(command))
 			break ;
+		if (g_signal_status != 0)
+		{
+			command->last_exit_code = g_signal_status;
+			g_signal_status = 0;
+		}
 		parse_input(command);
 		execute_commands(command);
 	}

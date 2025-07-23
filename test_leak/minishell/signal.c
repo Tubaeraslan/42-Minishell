@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:07:21 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/16 15:02:23 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/23 19:15:32 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ void	sigint_handler(int sig)
 	rl_replace_line("", 0);
 	rl_on_new_line();
 	rl_redisplay();
+	g_signal_status = 130;
 }
 
 void	handle_signals(void)
