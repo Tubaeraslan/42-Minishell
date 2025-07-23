@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:36:30 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/19 13:04:46 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/23 17:13:19 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,21 +47,61 @@ static int	count_commands(t_command *cmd)
 	return (count);
 }
 
-void	exec_external_or_exit(t_command *cmd)
+void exec_external_or_exit(t_command *cmd)
 {
-	char	*path;
+    char *path;
+    struct stat st;
 
-	path = path_finder(cmd->cmd, cmd->tmp->env);
-	if (!path)
-	{
-		ft_putstr_fd("command not found: ", 2);
-		ft_putstr_fd(cmd->cmd, 2);
-		ft_putchar_fd('\n', 2);
-		exit(127);
-	}
-	execve(path, cmd->args, cmd->tmp->env);
-	perror("execve");
-	exit(EXIT_FAILURE);
+    if (cmd->cmd[0] == '/' || (cmd->cmd[0] == '.' && cmd->cmd[1] == '/'))
+    {
+        path = ft_strdup(cmd->cmd);
+        if (!path)
+        {
+            perror("ft_strdup");
+            exit(1);
+        }
+    }
+    else
+    {
+        path = path_finder(cmd->cmd, cmd->tmp->env);
+        if (!path)
+        {
+            ft_putstr_fd("command not found: ", 2);
+            ft_putstr_fd(cmd->cmd, 2);
+            ft_putchar_fd('\n', 2);
+            exit(127);
+        }
+    }
+
+    if (stat(path, &st) != 0)
+    {
+        ft_putstr_fd(path, 2);
+        ft_putstr_fd(": No such file or directory\n", 2);
+        free(path);
+        exit(127);
+    }
+
+    if (S_ISDIR(st.st_mode))
+    {
+        ft_putstr_fd(path, 2);
+        ft_putstr_fd(": Is a directory\n", 2);
+        free(path);
+        exit(126);
+    }
+
+    if (!(st.st_mode & S_IXUSR))
+    {
+        ft_putstr_fd(path, 2);
+        ft_putstr_fd(": Permission denied\n", 2);
+        free(path);
+        exit(126);
+    }
+
+    execve(path, cmd->args, cmd->tmp->env);
+
+    perror("execve");
+    free(path);
+    exit(126);
 }
 
 int	wait_for_children(pid_t *pids, int count, pid_t last_pid)

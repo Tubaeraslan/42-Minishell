@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 20:34:23 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/19 13:05:27 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/23 17:12:32 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,21 +51,52 @@ char	*path_finder(char *cmd, char **env)
 
 void execute_child_process(t_command *command)
 {
-	char *path;
+    struct stat st;
+    char *path;
 
-	if (handle_redirections(command) == -1)
-		exit(1);
-	path = path_finder(command->cmd, command->tmp->env);
-	if (!path)
-	{
-		ft_putstr_fd(command->cmd, 2);
-		ft_putstr_fd(": command not found", 2);
-		ft_putchar_fd('\n', 2);
-		exit(127);
-	}
-	execve(path, command->args, command->tmp->env);
-	perror("execve");
-	exit(EXIT_FAILURE);
+    // Komut yol içeriyorsa direkt kullan
+    if (command->cmd[0] == '/' || (command->cmd[0] == '.' && command->cmd[1] == '/'))
+        path = ft_strdup(command->cmd);
+    else
+        path = path_finder(command->cmd, command->tmp->env);
+
+    if (!path)
+    {
+        ft_putstr_fd(command->cmd, 2);
+        ft_putstr_fd(": command not found\n", 2);
+        exit(127);
+    }
+
+    if (stat(path, &st) == -1)
+    {
+        ft_putstr_fd(path, 2);
+        ft_putstr_fd(": No such file or directory\n", 2);
+        free(path);
+        exit(127);
+    }
+
+    if (S_ISDIR(st.st_mode))
+    {
+        ft_putstr_fd(path, 2);
+        ft_putstr_fd(": Is a directory\n", 2);
+        free(path);
+        exit(126);
+    }
+
+    if (!(st.st_mode & S_IXUSR))
+    {
+        ft_putstr_fd(path, 2);
+        ft_putstr_fd(": Permission denied\n", 2);
+        free(path);
+        exit(126);
+    }
+
+    execve(path, command->args, command->tmp->env);
+
+    ft_putstr_fd(path, 2);
+    ft_putstr_fd(": execve error\n", 2);
+    free(path);
+    exit(126);
 }
 
 void	handle_fork_error(void)

@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 20:42:34 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/16 13:44:49 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/23 17:08:33 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ void	execute_a_token(t_command *command)
 		handle_fork_error();
 	else if (pid == 0)
 	{
+		handle_redirections(command);
 		execute_child_process(command);
 		exit(EXIT_FAILURE);
 	}
