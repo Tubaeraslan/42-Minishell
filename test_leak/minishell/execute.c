@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 20:34:23 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/23 19:28:42 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/24 18:15:43 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,11 +105,27 @@ void	handle_fork_error(void)
 	exit(EXIT_FAILURE);
 }
 
-void reset_pipe_flags(t_command *command)
+void reset_flags(t_command *command)
 {
     while (command)
     {
         command->is_pipe = 0;
+
+        // Heredoc flag ve kaynakları sıfırla
+        command->is_heredoc = 0;
+
+        if (command->heredoc_limiter)
+        {
+            free(command->heredoc_limiter);
+            command->heredoc_limiter = NULL;
+        }
+
+        if (command->heredoc_fd > 2)
+        {
+            close(command->heredoc_fd);
+            command->heredoc_fd = -1;
+        }
+
         command = command->next;
     }
 }
@@ -141,6 +157,6 @@ void execute_commands(t_command *command)
     {
         command->last_exit_code = execute_many_token(command);
     }
-    reset_pipe_flags(command);
+    reset_flags(command);
     free_command_fields(command);
 }

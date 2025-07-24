@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:04:40 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/23 19:33:35 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/24 18:15:49 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ void	init_command(t_command *command, t_data *shell, char **envp)
 	command->heredoc_limiter = NULL;
 	command->is_append = 0;
 	command->is_heredoc = 0;
-	command->heredoc_fd = 0;
+	command->heredoc_fd = -1;
 	command->last_exit_code = 0;
 	command->parsing_error = 0;
 	command->error_printed = 0;

@@ -6,11 +6,21 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 20:41:22 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/24 13:56:40 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/24 18:26:31 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+void strip_newline(char *str)
+{
+    size_t len = strlen(str);
+    while (len > 0 && (str[len - 1] == '\n' || str[len - 1] == '\r'))
+    {
+        str[len - 1] = '\0';
+        len--;
+    }
+}
 
 void setup_heredoc(t_command *cmd)
 {
@@ -20,32 +30,16 @@ void setup_heredoc(t_command *cmd)
     if (pipe(pipe_fd) == -1)
     {
         perror("pipe");
-        cmd->heredoc_fd = -1;
         exit(EXIT_FAILURE);
     }
-
-    // Eğer pipe_fd[0] 0,1 veya 2 ise dup kullanarak yeni fd al, eskiyi kapat
-    if (pipe_fd[0] <= 2)
-    {
-        int new_fd = dup(pipe_fd[0]);
-        close(pipe_fd[0]);
-        pipe_fd[0] = new_fd;
-    }
-
-    // Aynı şekilde pipe_fd[1] için de
-    if (pipe_fd[1] <= 2)
-    {
-        int new_fd = dup(pipe_fd[1]);
-        close(pipe_fd[1]);
-        pipe_fd[1] = new_fd;
-    }
-
     while (1)
     {
         line = readline("> ");
         if (!line)
             break;
-        if (ft_strncmp(line, cmd->heredoc_limiter, ft_strlen(cmd->heredoc_limiter) + 1) == 0)
+        // Satır sonunu temizleme fonksiyonu uygunsa çağır (strip_newline gibi)
+
+        if (strcmp(line, cmd->heredoc_limiter) == 0)
         {
             free(line);
             break;
@@ -56,6 +50,7 @@ void setup_heredoc(t_command *cmd)
     }
     close(pipe_fd[1]);
     cmd->heredoc_fd = pipe_fd[0];
+    cmd->is_heredoc = 1;
 }
 
 static int	handle_input_redirection(t_command *cmd)
@@ -64,10 +59,7 @@ static int	handle_input_redirection(t_command *cmd)
 
 	if (cmd->is_heredoc)
 	{
-		if (cmd->heredoc_fd < 0)
-			return (-1);
-		if (dup2(cmd->heredoc_fd, STDIN_FILENO) == -1)
-			return (-1);
+		dup2(cmd->heredoc_fd, STDIN_FILENO);
 		close(cmd->heredoc_fd);
 		return (0);
 	}
@@ -79,12 +71,7 @@ static int	handle_input_redirection(t_command *cmd)
 			perror(cmd->infile);
 			return (-1);
 		}
-		if (dup2(fd, STDIN_FILENO) == -1)
-		{
-			perror("dup2 infile");
-			close(fd);
-			return (-1);
-		}
+		dup2(fd, STDIN_FILENO);
 		close(fd);
 	}
 	return (0);

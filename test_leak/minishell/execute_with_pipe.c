@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:36:30 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/23 17:13:19 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/24 17:43:49 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,24 +107,25 @@ void exec_external_or_exit(t_command *cmd)
 int	wait_for_children(pid_t *pids, int count, pid_t last_pid)
 {
 	int	status;
-	int	exit_code;
-	int	j;
+	int	exit_code = 0;
+	int	waited = 0;
+	pid_t	pid;
 
-	exit_code = 0;
-	j = 0;
-	while (j < count)
+	(void)pids;
+	while (waited < count)
 	{
-		waitpid(pids[j], &status, 0);
-		if (pids[j] == last_pid)
+		pid = wait(&status);
+		if (pid == -1)
+			break;
+
+		if (pid == last_pid)
 		{
 			if (WIFEXITED(status))
 				exit_code = WEXITSTATUS(status);
 			else if (WIFSIGNALED(status))
 				exit_code = 128 + WTERMSIG(status);
-			else
-				exit_code = 1;
 		}
-		j++;
+		waited++;
 	}
 	return (exit_code);
 }

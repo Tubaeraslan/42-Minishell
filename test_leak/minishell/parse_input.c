@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:37:12 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/23 19:33:15 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/24 18:25:35 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,23 +100,48 @@ static void	token(t_command *command)
 	process_remaining_buffer(command, tk);
 }
 
-char	*get_heredoc_limiter(char *input)
+char *get_heredoc_limiter(char *input)
 {
-	char	**tokens = ft_split(input, ' ');
-	int		i = 0;
-	char	*limiter = NULL;
+    int i = 0;
+    int inside_single_quote = 0;
+    int inside_double_quote = 0;
 
-	while (tokens[i])
-	{
-		if (strcmp(tokens[i], "<<") == 0 && tokens[i + 1])
-		{
-			limiter = ft_strdup(tokens[i + 1]);
-			break ;
-		}
-		i++;
-	}
-	//ft_free_split(tokens); // belleği temizle
-	return (limiter);
+    while (input[i])
+    {
+        if (input[i] == '\'' && !inside_double_quote)
+            inside_single_quote = !inside_single_quote;
+        else if (input[i] == '\"' && !inside_single_quote)
+            inside_double_quote = !inside_double_quote;
+
+        if (!inside_single_quote && !inside_double_quote)
+        {
+            if (input[i] == '<' && input[i + 1] == '<')
+            {
+                i += 2;
+                // Boşlukları atla
+                while (input[i] == ' ' || input[i] == '\t')
+                    i++;
+
+                int start = i;
+                while (input[i] && input[i] != ' ' && input[i] != '\t' && input[i] != '\n')
+                    i++;
+
+                int len = i - start;
+                if (len == 0)
+                    return NULL;
+
+                char *limiter = malloc(len + 1);
+                if (!limiter)
+                    return NULL;
+                strncpy(limiter, input + start, len);
+                limiter[len] = '\0';
+
+                return limiter;
+            }
+        }
+        i++;
+    }
+    return NULL;
 }
 
 int	has_heredoc(char *input)
@@ -128,13 +153,17 @@ void	parse_input(t_command *command)
 {
 	if (!command->tmp->input || command->tmp->input[0] == '\0')
 		return ;
-
+	t_command *cmd = command;
 	// Heredoc varsa önce oku
-	if (has_heredoc(command->tmp->input))
+	while (cmd)
 	{
-		command->heredoc_limiter = get_heredoc_limiter(command->tmp->input); // "< <EOF" gibi kısımdan limiter al
-		if (command->heredoc_limiter)
-			setup_heredoc(command);
+		if (has_heredoc(cmd->tmp->input) && cmd->heredoc_fd == -1)
+		{
+			cmd->heredoc_limiter = get_heredoc_limiter(cmd->tmp->input);
+			if (cmd->heredoc_limiter)
+				setup_heredoc(cmd);
+		}
+		cmd = cmd->next;
 	}
 
 	// Sonra syntax hatalarına bak
