@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 20:19:32 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/19 13:47:42 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/24 13:15:18 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,8 @@ void clear_command_data(t_command *cmd)
     }
 	//free_data(cmd->tmp);
 	cmd->is_pipe = 0;
-	cmd->heredoc_fd = 0;
-	cmd->is_heredoc = 0;
+	// cmd->heredoc_fd = -1;
+	// cmd->is_heredoc = 0;
 	cmd->is_append = 0;
 }
 

@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 20:42:34 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/23 17:08:33 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/24 12:09:02 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,8 @@ void	execute_a_token(t_command *command)
 
 	if (!command || !command->cmd)
 		return ;
-	if (command->is_heredoc)
-		setup_heredoc(command);
+	// if (command->is_heredoc)
+	// 	setup_heredoc(command);
 	if (is_built(command->cmd) == 1)
 	{
 		execute_builtin_with_redir(command);

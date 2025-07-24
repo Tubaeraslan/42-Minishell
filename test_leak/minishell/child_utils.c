@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/19 12:51:33 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/19 13:03:51 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/24 13:57:46 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,19 +16,39 @@ static void	handle_child(t_command *cmd, int prev_fd, int *fd)
 {
 	if (cmd->parsing_error)
 		exit(1);
-	if (prev_fd != -1)
+
+	if (cmd->is_heredoc && !cmd->next) // heredoc varsa ve son komutsa
+	{
+		dup2(cmd->heredoc_fd, STDIN_FILENO);
+		close(cmd->heredoc_fd);
+	}
+	else if (cmd->infile && !cmd->is_heredoc)
+	{
+		int fd_in = open(cmd->infile, O_RDONLY);
+		if (fd_in < 0)
+		{
+			perror(cmd->infile);
+			exit(1);
+		}
+		dup2(fd_in, STDIN_FILENO);
+		close(fd_in);
+	}
+	else if (prev_fd != -1)
 	{
 		dup2(prev_fd, STDIN_FILENO);
 		close(prev_fd);
 	}
+
 	if (cmd->next)
 	{
 		close(fd[0]);
 		dup2(fd[1], STDOUT_FILENO);
 		close(fd[1]);
 	}
+
 	if (handle_redirections(cmd) == -1)
 		exit(1);
+
 	if (is_built(cmd->cmd))
 	{
 		execute_built(cmd);
