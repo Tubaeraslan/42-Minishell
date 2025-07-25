@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ican <<ican@student.42.fr>>                +#+  +:+       +#+        */
+/*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 19:24:49 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/19 18:01:16 by ican             ###   ########.fr       */
+/*   Updated: 2025/07/25 12:46:13 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,16 @@ void	expand_variable_from_env(t_expand *ex, t_command *command)
 	if (ex->input[ex->i] == '?')
 	{
 		expand_exit_code(ex, command);
+		return ;
+	}
+	else if (ex->input[ex->i] == '$') // $$ durumu
+	{
+		char *pid_str = ft_itoa(getpid());
+		int m = 0;
+		while (pid_str[m])
+			ex->new_input[ex->j++] = pid_str[m++];
+		free(pid_str);
+		ex->i++; // ikinci $'i de geç
 		return ;
 	}
 	while (ex->input[ex->i]

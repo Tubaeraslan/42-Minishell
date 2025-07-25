@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:37:12 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/24 18:25:35 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/25 13:04:06 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,7 +152,13 @@ int	has_heredoc(char *input)
 void	parse_input(t_command *command)
 {
 	if (!command->tmp->input || command->tmp->input[0] == '\0')
-		return ;
+		return;
+	if (ft_strncmp(command->tmp->input, "\"\"", 2) == 0)
+	{
+		ft_putstr_fd("minishell: command not found\n", STDERR_FILENO);
+		command->last_exit_code = 127;
+		return;
+	}
 	t_command *cmd = command;
 	// Heredoc varsa önce oku
 	while (cmd)
