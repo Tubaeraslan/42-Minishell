@@ -6,77 +6,40 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/19 12:51:33 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/24 18:24:48 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/25 15:14:12 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static void handle_child(t_command *cmd, int prev_fd, int *fd)
+static void	setup_stdout(t_command *cmd, int *fd)
 {
-    if (cmd->parsing_error)
-        exit(1);
-
-    if (cmd->is_heredoc)
-    {
-        if (dup2(cmd->heredoc_fd, STDIN_FILENO) == -1)
-        {
-            perror("dup2 heredoc");
-            exit(1);
-        }
-        close(cmd->heredoc_fd);
-    }
-    else if (cmd->infile)
+	if (cmd->next)
 	{
-		if (access(cmd->infile, F_OK) != 0)
+		close(fd[0]);
+		if (dup2(fd[1], STDOUT_FILENO) == -1)
 		{
-			perror(cmd->infile);
-			exit(1); // sadece bu child çıkış yapar
-		}
-
-		int fd_in = open(cmd->infile, O_RDONLY);
-		if (fd_in < 0)
-		{
-			perror(cmd->infile);
+			perror("dup2 fd[1]");
 			exit(1);
 		}
-		if (dup2(fd_in, STDIN_FILENO) == -1)
-		{
-			perror("dup2 infile");
-			exit(1);
-		}
-		close(fd_in);
+		close(fd[1]);
 	}
-    else if (prev_fd != -1)
-    {
-        if (dup2(prev_fd, STDIN_FILENO) == -1)
-        {
-            perror("dup2 prev_fd");
-            exit(1);
-        }
-        close(prev_fd);
-    }
+}
 
-    if (cmd->next)
-    {
-        close(fd[0]);
-        if (dup2(fd[1], STDOUT_FILENO) == -1)
-        {
-            perror("dup2 fd[1]");
-            exit(1);
-        }
-        close(fd[1]);
-    }
-
-    if (handle_redirections(cmd) == -1)
-        exit(1);
-
-    if (is_built(cmd->cmd))
-    {
-        execute_built(cmd);
-        exit(cmd->last_exit_code);
-    }
-    exec_external_or_exit(cmd);
+static void	handle_child(t_command *cmd, int prev_fd, int *fd)
+{
+	if (cmd->parsing_error)
+		exit(1);
+	setup_stdin(cmd, prev_fd);
+	setup_stdout(cmd, fd);
+	if (handle_redirections(cmd) == -1)
+		exit(1);
+	if (is_built(cmd->cmd))
+	{
+		execute_built(cmd);
+		exit(cmd->last_exit_code);
+	}
+	exec_external_or_exit(cmd);
 }
 
 pid_t	handle_fork(t_command *cmd, int prev_fd, int *fd)

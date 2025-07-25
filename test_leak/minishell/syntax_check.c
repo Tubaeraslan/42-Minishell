@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 19:06:19 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/19 13:14:15 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/25 16:58:30 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,5 +77,18 @@ int	check_redirects(char *input)
 		}
 		i++;
 	}
+	return (1);
+}
+
+int	check_syntax_errors(t_command *command)
+{
+	if (is_valid_syntax(command->tmp->input) == 0)
+		return (parse_error(command, "syntax error: unclosed quote"), 0);
+	if (check_pipe(command->tmp->input) == 0)
+		return (parse_error(command,
+				"syntax error near unexpected token `|'"), 0);
+	if (check_redirects(command->tmp->input) == 0)
+		return (parse_error(command,
+				"syntax error near unexpected token `newline'"), 0);
 	return (1);
 }

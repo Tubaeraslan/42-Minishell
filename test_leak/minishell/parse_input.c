@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:37:12 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/25 13:04:06 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/25 16:58:53 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,16 +31,7 @@ void	add_token(t_command *command, char *buffer)
 	}
 	tmp[i++] = buffer;
 	tmp[i] = NULL;
-	if (command->tokens)
-	{
-		for (int j = 0; j < command->token_count; j++)
-		{
-			free(command->tokens[j]);  // içteki strdup edilmiş string'leri sil
-			command->tokens[j] = NULL;
-		}
-		free(command->tokens);        // sonra diziyi sil
-		command->tokens = NULL;
-	}
+	free_old_tokens(command);
 	command->tokens = tmp;
 	command->token_count++;
 }
@@ -100,95 +91,19 @@ static void	token(t_command *command)
 	process_remaining_buffer(command, tk);
 }
 
-char *get_heredoc_limiter(char *input)
-{
-    int i = 0;
-    int inside_single_quote = 0;
-    int inside_double_quote = 0;
-
-    while (input[i])
-    {
-        if (input[i] == '\'' && !inside_double_quote)
-            inside_single_quote = !inside_single_quote;
-        else if (input[i] == '\"' && !inside_single_quote)
-            inside_double_quote = !inside_double_quote;
-
-        if (!inside_single_quote && !inside_double_quote)
-        {
-            if (input[i] == '<' && input[i + 1] == '<')
-            {
-                i += 2;
-                // Boşlukları atla
-                while (input[i] == ' ' || input[i] == '\t')
-                    i++;
-
-                int start = i;
-                while (input[i] && input[i] != ' ' && input[i] != '\t' && input[i] != '\n')
-                    i++;
-
-                int len = i - start;
-                if (len == 0)
-                    return NULL;
-
-                char *limiter = malloc(len + 1);
-                if (!limiter)
-                    return NULL;
-                strncpy(limiter, input + start, len);
-                limiter[len] = '\0';
-
-                return limiter;
-            }
-        }
-        i++;
-    }
-    return NULL;
-}
-
-int	has_heredoc(char *input)
-{
-	return (ft_strnstr(input, "<<", ft_strlen(input)) != NULL);
-}
-
 void	parse_input(t_command *command)
 {
 	if (!command->tmp->input || command->tmp->input[0] == '\0')
-		return;
+		return ;
 	if (ft_strncmp(command->tmp->input, "\"\"", 2) == 0)
 	{
 		ft_putstr_fd("minishell: command not found\n", STDERR_FILENO);
 		command->last_exit_code = 127;
-		return;
-	}
-	t_command *cmd = command;
-	// Heredoc varsa önce oku
-	while (cmd)
-	{
-		if (has_heredoc(cmd->tmp->input) && cmd->heredoc_fd == -1)
-		{
-			cmd->heredoc_limiter = get_heredoc_limiter(cmd->tmp->input);
-			if (cmd->heredoc_limiter)
-				setup_heredoc(cmd);
-		}
-		cmd = cmd->next;
-	}
-
-	// Sonra syntax hatalarına bak
-	if (is_valid_syntax(command->tmp->input) == 0)
-	{
-		parse_error(command, "syntax error: unclosed quote");
 		return ;
 	}
-	if (check_pipe(command->tmp->input) == 0)
-	{
-		parse_error(command, "syntax error near unexpected token `|'");
+	check_heredoc_and_setup(command);
+	if (!check_syntax_errors(command))
 		return ;
-	}
-	if (check_redirects(command->tmp->input) == 0)
-	{
-		parse_error(command, "syntax error near unexpected token `newline'");
-		return ;
-	}
-
 	expand_variables(command);
 	token(command);
 	parsing(command);

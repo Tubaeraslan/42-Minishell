@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:13:40 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/25 12:32:45 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/25 15:14:43 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ static int	is_n_flag(char *arg)
 {
 	int	i;
 
-	if (!arg || arg[0] != '-' || !arg[1]) // <== BU SATIRA DİKKAT
+	if (!arg || arg[0] != '-' || !arg[1])
 		return (0);
 	i = 1;
 	while (arg[i])
@@ -35,7 +35,6 @@ void	ft_echo(t_command *cmd)
 
 	i = 1;
 	newline = 1;
-	
 	while (cmd->args[i] && is_n_flag(cmd->args[i]))
 	{
 		newline = 0;

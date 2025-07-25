@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:36:30 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/24 17:43:49 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/25 15:32:06 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,90 +34,38 @@ void	child_execute_command(t_command *cmd)
 	exit(EXIT_FAILURE);
 }
 
-static int	count_commands(t_command *cmd)
+static void	execute_commands_pipe(char *path, t_command *cmd)
 {
-	int	count;
-
-	count = 0;
-	while (cmd)
-	{
-		count++;
-		cmd = cmd->next;
-	}
-	return (count);
+	execve(path, cmd->args, cmd->tmp->env);
+	perror("execve");
+	free(path);
+	exit(126);
 }
 
-void exec_external_or_exit(t_command *cmd)
+void	exec_external_or_exit(t_command *cmd)
 {
-    char *path;
-    struct stat st;
+	char	*path;
 
-    if (cmd->cmd[0] == '/' || (cmd->cmd[0] == '.' && cmd->cmd[1] == '/'))
-    {
-        path = ft_strdup(cmd->cmd);
-        if (!path)
-        {
-            perror("ft_strdup");
-            exit(1);
-        }
-    }
-    else
-    {
-        path = path_finder(cmd->cmd, cmd->tmp->env);
-        if (!path)
-        {
-            ft_putstr_fd("command not found: ", 2);
-            ft_putstr_fd(cmd->cmd, 2);
-            ft_putchar_fd('\n', 2);
-            exit(127);
-        }
-    }
-
-    if (stat(path, &st) != 0)
-    {
-        ft_putstr_fd(path, 2);
-        ft_putstr_fd(": No such file or directory\n", 2);
-        free(path);
-        exit(127);
-    }
-
-    if (S_ISDIR(st.st_mode))
-    {
-        ft_putstr_fd(path, 2);
-        ft_putstr_fd(": Is a directory\n", 2);
-        free(path);
-        exit(126);
-    }
-
-    if (!(st.st_mode & S_IXUSR))
-    {
-        ft_putstr_fd(path, 2);
-        ft_putstr_fd(": Permission denied\n", 2);
-        free(path);
-        exit(126);
-    }
-
-    execve(path, cmd->args, cmd->tmp->env);
-
-    perror("execve");
-    free(path);
-    exit(126);
+	path = get_command_path(cmd);
+	check_path_validity(path);
+	execute_commands_pipe(path, cmd);
 }
 
 int	wait_for_children(pid_t *pids, int count, pid_t last_pid)
 {
-	int	status;
-	int	exit_code = 0;
-	int	waited = 0;
+	int		status;
+	int		exit_code;
+	int		waited;
 	pid_t	pid;
 
+	exit_code = 0;
+	waited = 0;
 	(void)pids;
 	while (waited < count)
 	{
 		pid = wait(&status);
 		if (pid == -1)
-			break;
-
+			break ;
 		if (pid == last_pid)
 		{
 			if (WIFEXITED(status))

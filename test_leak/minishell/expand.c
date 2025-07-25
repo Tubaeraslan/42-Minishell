@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 19:24:49 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/25 12:46:13 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/25 15:40:24 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,43 +25,25 @@ static void	expand_exit_code(t_expand *ex, t_command *command)
 	ex->i++;
 }
 
-static void	copy_env_value_to_input(t_expand *ex, char *value)
-{
-	int	m;
-
-	m = 0;
-	while (value[m])
-		ex->new_input[ex->j++] = value[m++];
-}
-
 void	expand_variable_from_env(t_expand *ex, t_command *command)
 {
 	char	varname[256];
-	int		k;
+	int		len;
 	char	*value;
 
-	k = 0;
 	ex->i++;
 	if (ex->input[ex->i] == '?')
 	{
 		expand_exit_code(ex, command);
 		return ;
 	}
-	else if (ex->input[ex->i] == '$') // $$ durumu
+	else if (ex->input[ex->i] == '$')
 	{
-		char *pid_str = ft_itoa(getpid());
-		int m = 0;
-		while (pid_str[m])
-			ex->new_input[ex->j++] = pid_str[m++];
-		free(pid_str);
-		ex->i++; // ikinci $'i de geç
+		expand_pid(ex);
 		return ;
 	}
-	while (ex->input[ex->i]
-		&& (ft_isalnum(ex->input[ex->i]) || ex->input[ex->i] == '_'))
-		varname[k++] = ex->input[ex->i++];
-	varname[k] = '\0';
-	if (k == 0)
+	len = read_varname(ex->input, &(ex->i), varname);
+	if (len == 0)
 	{
 		ex->new_input[ex->j++] = '$';
 		return ;

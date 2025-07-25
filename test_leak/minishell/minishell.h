@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:04:57 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/23 19:09:47 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/25 17:29:46 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,8 @@
 # include <errno.h>
 # include <sys/stat.h>
 
-extern int g_signal_status;
+//extern
+extern int	g_signal_status;
 
 typedef struct s_data
 {
@@ -45,27 +46,27 @@ typedef struct s_expand
 
 typedef enum e_redirect_type
 {
-	REDIR_IN,   //<
-	REDIR_OUT,	//>
-	REDIR_APPEND,	//>>
-	REDIR_HEREDOC	//<<
+	REDIR_IN,
+	REDIR_OUT,
+	REDIR_APPEND,
+	REDIR_HEREDOC
 }	t_redirect_type;
 
 typedef struct s_redirects
 {
-	t_redirect_type type;
-	char *name; //yönlendirme yapılan dosya adı
-	struct s_redirects *next;
+	t_redirect_type		type;
+	char				*name;
+	struct s_redirects	*next;
 }	t_redirects;
 
 typedef struct s_tokenizer
 {
-	int		i;
-	int		j;
-	int		inside_quotes;
-	char	char_quote;
-	char	buffer[1024];
-	const char *src;
+	int			i;
+	int			j;
+	int			inside_quotes;
+	char		char_quote;
+	char		buffer[1024];
+	const char	*src;
 }	t_tokenizer;
 
 typedef struct s_GarbageCollector
@@ -75,15 +76,15 @@ typedef struct s_GarbageCollector
 
 typedef struct s_command
 {
-	char **tokens; //["ls" , "-l", "cat", "hello","|"]
+	char **tokens;
 	int token_count;
-	char *cmd;  //komut listesi
-	char **args; //argüman listesi
-	char *infile; // <dosya kullanıdlığında
-	char *outfile; // > >> dosya kullanıldığında
-	int is_append; // > yada >> mı kontrol
+	char *cmd;
+	char **args;
+	char *infile;
+	char *outfile;
+	int is_append;
 	t_redirects *redirects;
-	struct s_command	*next;  //pipelara bölünce bir sonraki komutu tutmak için
+	struct s_command	*next;
 	t_data *tmp;
 	char *heredoc_limiter;
 	int is_heredoc;
@@ -149,10 +150,23 @@ void		parse_error(t_command *command, const char *msg);
 int			infile_error(t_command *cmd, char *file, const char *msg, int ex_c);
 int			outfile_error(t_command *command, char *file, const char *msg, int ex_c);
 void		copy_tokens(t_command *next_cmd, char **tokens, int start, int count);
-
+void		setup_stdin(t_command *cmd, int prev_fd);
+int			heredoc_loop(t_command *cmd, int pipe_write_fd);
+void		check_path_validity(char *path);
+char		*get_command_path(t_command *cmd);
+int			count_commands(t_command *cmd);
+void		copy_env_value_to_input(t_expand *ex, char *value);
+void		expand_pid(t_expand *ex);
+int			read_varname(char *input, int *i, char *varname);
+int			check_syntax_errors(t_command *command);
+void		check_heredoc_and_setup(t_command *command);
+char		*ft_strncpy(char *dst, const char *src, size_t len);
 void		free_two_dimension(char **arg);
 void		all_free(t_command *comd, t_data *shell);
 void		clear_command_data(t_command *cmd);
+void		check_executable(char *path, struct stat *st);
+void		exec_command(t_command *command, char *path);
 void		free_data(t_data *tmp);
-
+void		free_old_tokens(t_command *command);
+void		free_command_fields(t_command *command);
 #endif
