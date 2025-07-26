@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc_utils.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ican <<ican@student.42.fr>>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/25 15:20:14 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/25 19:18:40 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/26 19:30:55 by ican             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -166,6 +166,8 @@ void	check_heredoc_and_setup(t_command *command)
 				int pipe_fd[2];
 				if (pipe(pipe_fd) == -1)
 				{
+					free_heredoc_list(heredocs);
+					all_free(command);
 					perror("pipe");
 					exit(EXIT_FAILURE);
 				}

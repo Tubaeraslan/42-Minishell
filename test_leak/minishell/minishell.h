@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ican <<ican@student.42.fr>>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:04:57 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/26 12:26:48 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/26 19:00:09 by ican             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,11 +76,6 @@ typedef struct s_tokenizer
 	const char	*src;
 }	t_tokenizer;
 
-typedef struct s_GarbageCollector
-{
-
-}	s_GarbageCollector;
-
 typedef struct s_command
 {
 	char **tokens;
@@ -103,7 +98,6 @@ typedef struct s_command
 	int error_printed;
 	char **export_list;
 	t_tokenizer tokenizer;
-	s_GarbageCollector collector;
 }	t_command;
 
 
@@ -170,7 +164,7 @@ int			check_syntax_errors(t_command *command);
 void		check_heredoc_and_setup(t_command *command);
 char		*ft_strncpy(char *dst, const char *src, size_t len);
 void		free_two_dimension(char **arg);
-void		all_free(t_command *comd, t_data *shell);
+void 		all_free(t_command *cmd);
 void		clear_command_data(t_command *cmd);
 void		check_executable(char *path, struct stat *st);
 void		exec_command(t_command *command, char *path);

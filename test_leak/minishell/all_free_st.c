@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   all_free_st.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ican <<ican@student.42.fr>>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/21 16:09:21 by ican              #+#    #+#             */
-/*   Updated: 2025/07/25 17:06:32 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/26 18:53:44 by ican             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,24 +40,24 @@ void    free_data(t_data *tmp)
 }
 
 
-void all_free(t_command *comd, t_data *shell)
+void all_free(t_command *cmd)
 {
-    if (!comd)
+    if (!cmd)
         return;
     //if ((comd->tokens && comd->tokens[0]) || comd->tokens != NULL)
       //  clear_tokens(comd);
-    if (comd->cmd && ft_strlen(comd->cmd) > 0)
+    if (cmd->cmd && ft_strlen(cmd->cmd) > 0)
     {
-        free(comd->cmd);
-        comd->cmd = NULL;
+        free(cmd->cmd);
+        cmd->cmd = NULL;
     }
-    if (comd->args && comd->args[0])
+    if (cmd->args && cmd->args[0])
     {
-        free_two_dimension(comd->args);
-        comd->args = NULL;
+        free_two_dimension(cmd->args);
+        cmd->args = NULL;
     }
-    clear_command_data(comd);
-    free_data(shell);
+    clear_command_data(cmd);
+    free_data(cmd->tmp);
 }
 
 //parsing için lazım
@@ -116,25 +116,3 @@ void free_command_fields(t_command *command)
     // free_redirects(command->redirects);
     // vs.
 }
-
-/*
-typedef struct s_command
-{
-	char **tokens; //["ls" , "-l", "cat", "hello","|"]
-	int token_count;
-	char *cmd;  //komut listesi
-	char **args; //argüman listesi
-	char *infile; // <dosya kullanıdlığında
-	char *outfile; // > >> dosya kullanıldığında
-	int is_append; // > yada >> mı kontrol
-	t_redirects *redirects;
-	struct s_command	*next;  //pipelara bölünce bir sonraki komutu tutmak için
-	t_data *tmp;
-	char *heredoc_limiter;
-	int is_heredoc;
-	int heredoc_fd;
-	int is_pipe;
-	int last_exit_code;
-	t_tokenizer tokenizer;
-}	t_command;
-*/

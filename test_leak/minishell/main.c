@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ican <<ican@student.42.fr>>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:04:40 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/26 12:27:03 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/26 19:36:30 by ican             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,6 @@ void	init_command(t_command *command, t_data *shell, char **envp)
 	command->error_printed = 0;
 	command->export_list = NULL;
 	ft_bzero(&command->tokenizer, sizeof(t_tokenizer));
-	ft_bzero(&command->collector, sizeof(s_GarbageCollector));
 }
 
 static void	init_pointer(t_command **command, t_data **shell)
@@ -59,6 +58,7 @@ static int	read_and_prepare_input(t_command *command)
 	if (!input)
 	{
 		printf("exit\n");
+		all_free(command);
 		return (1);
 	}
 	add_history(input);
@@ -72,6 +72,7 @@ static int	read_and_prepare_input(t_command *command)
 	if (!command->tmp->input)
 	{
 		perror("ft_strdup");
+		all_free(command);
 		return (1);
 	}
 	return (0);
