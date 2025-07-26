@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/25 15:20:14 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/25 16:57:36 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/25 19:18:40 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,19 +85,99 @@ int	has_heredoc(char *input)
 {
 	return (ft_strnstr(input, "<<", ft_strlen(input)) != NULL);
 }
+t_heredoc	*get_all_heredocs(char *input)
+{
+	t_heredoc	*head = NULL;
+	t_heredoc	*last = NULL;
+	int			i = 0;
+	int			in_squote = 0, in_dquote = 0;
+
+	while (input[i])
+	{
+		if (input[i] == '\'' && !in_dquote)
+			in_squote = !in_squote;
+		else if (input[i] == '"' && !in_squote)
+			in_dquote = !in_dquote;
+		if (!in_squote && !in_dquote && input[i] == '<' && input[i + 1] == '<')
+		{
+			t_heredoc *node = malloc(sizeof(t_heredoc));
+			node->limiter = extract_limiter(input, i + 2); // aynı fonksiyonu kullan
+			node->index = i;
+			node->next = NULL;
+			if (!head)
+				head = node;
+			else
+				last->next = node;
+			last = node;
+			i += 2;
+		}
+		else
+			i++;
+	}
+	return head;
+}
+
+void	free_heredoc_list(t_heredoc *lst)
+{
+	t_heredoc *tmp;
+	while (lst)
+	{
+		tmp = lst->next;
+		free(lst->limiter);
+		free(lst);
+		lst = tmp;
+	}
+}
+
+void	heredoc_loop_custom(char *limiter, int write_fd)
+{
+	char	*line;
+
+	while (1)
+	{
+		line = readline("> ");
+		if (!line)
+			break;
+		if (ft_strncmp(line, limiter, ft_strlen(limiter) + 1) == 0)
+		{
+			free(line);
+			break;
+		}
+		write(write_fd, line, ft_strlen(line));
+		write(write_fd, "\n", 1);
+		free(line);
+	}
+}
 
 void	check_heredoc_and_setup(t_command *command)
 {
-	t_command	*cmd;
+	t_command	*cmd = command;
+	t_heredoc	*heredocs;
+	t_heredoc	*tmp;
 
-	cmd = command;
 	while (cmd)
 	{
 		if (has_heredoc(cmd->tmp->input) && cmd->heredoc_fd == -1)
 		{
-			cmd->heredoc_limiter = get_heredoc_limiter(cmd->tmp->input);
-			if (cmd->heredoc_limiter)
-				setup_heredoc(cmd);
+			heredocs = get_all_heredocs(cmd->tmp->input);
+			tmp = heredocs;
+			while (tmp)
+			{
+				int pipe_fd[2];
+				if (pipe(pipe_fd) == -1)
+				{
+					perror("pipe");
+					exit(EXIT_FAILURE);
+				}
+				// Her heredoc için ayrı ayrı input al
+				heredoc_loop_custom(tmp->limiter, pipe_fd[1]);
+				close(pipe_fd[1]);
+				cmd->heredoc_fd = pipe_fd[0];
+				cmd->is_heredoc = 1;
+				tmp = tmp->next;
+			}
+			// Heredoc listesi temizlenmeli
+			free_heredoc_list(heredocs);
 		}
 		cmd = cmd->next;
 	}

@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 20:41:22 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/25 15:20:08 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/26 12:18:28 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,21 +22,6 @@ void	strip_newline(char *str)
 		str[len - 1] = '\0';
 		len--;
 	}
-}
-
-void	setup_heredoc(t_command *cmd)
-{
-	int		pipe_fd[2];
-
-	if (pipe(pipe_fd) == -1)
-	{
-		perror("pipe");
-		exit(EXIT_FAILURE);
-	}
-	heredoc_loop(cmd, pipe_fd[1]);
-	close(pipe_fd[1]);
-	cmd->heredoc_fd = pipe_fd[0];
-	cmd->is_heredoc = 1;
 }
 
 static int	handle_input_redirection(t_command *cmd)

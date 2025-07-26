@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:04:57 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/25 17:29:46 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/26 12:18:20 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,13 @@ typedef struct s_redirects
 	struct s_redirects	*next;
 }	t_redirects;
 
+typedef struct s_heredoc
+{
+	char	*limiter;
+	int		index; // input içindeki konumu
+	struct s_heredoc *next;
+}	t_heredoc;
+
 typedef struct s_tokenizer
 {
 	int			i;
@@ -87,6 +94,7 @@ typedef struct s_command
 	struct s_command	*next;
 	t_data *tmp;
 	char *heredoc_limiter;
+	t_heredoc *heredocs;
 	int is_heredoc;
 	int heredoc_fd;
 	int is_pipe;
@@ -118,7 +126,6 @@ int			handle_heredoc(t_command *command, char **tokens, int *i);
 t_command	*create_next_command(t_command *command, char **tokens, int index);
 void		update_args_and_cmd(t_command *command, char **args, int count);
 void		execute_commands(t_command *command);
-void		setup_heredoc(t_command *cmd);
 int			is_built(char *arg);
 pid_t		handle_fork(t_command *cmd, int prev_fd, int *fd);
 void		execute_builtin_with_redir(t_command *command);
