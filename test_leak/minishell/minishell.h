@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:04:57 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/26 12:18:20 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/26 12:26:48 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,6 +101,7 @@ typedef struct s_command
 	int last_exit_code;
 	int parsing_error;
 	int error_printed;
+	char **export_list;
 	t_tokenizer tokenizer;
 	s_GarbageCollector collector;
 }	t_command;

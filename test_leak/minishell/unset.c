@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:18:52 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/19 13:09:10 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/26 12:38:10 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,12 +49,6 @@ void	ft_unset(t_command *cmd)
 	{
 		if (is_valid(cmd->args[i]))
 			cmd->tmp->env = remove_from_env(cmd->tmp->env, cmd->args[i]);
-		else
-		{
-			ft_putstr_fd("minishell: unset: `", 2);
-			ft_putstr_fd(cmd->args[i], 2);
-			ft_putstr_fd("': not a valid identifier\n", 2);
-		}
 		i++;
 	}
 }
