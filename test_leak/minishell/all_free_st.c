@@ -6,7 +6,7 @@
 /*   By: ican <<ican@student.42.fr>>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/21 16:09:21 by ican              #+#    #+#             */
-/*   Updated: 2025/07/27 17:27:57 by ican             ###   ########.fr       */
+/*   Updated: 2025/07/27 18:44:07 by ican             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ void free_two_dimension(char **arg)
         i++;
     }
     free(arg);
+    arg = NULL;
 }
 void    free_data(t_data *tmp)
 {

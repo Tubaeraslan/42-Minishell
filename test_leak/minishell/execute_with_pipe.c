@@ -6,7 +6,7 @@
 /*   By: ican <<ican@student.42.fr>>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:36:30 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/27 15:31:34 by ican             ###   ########.fr       */
+/*   Updated: 2025/07/27 18:59:23 by ican             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ void	child_execute_command(t_command *cmd)
 	if (is_built(cmd->cmd))
 	{
 		execute_built(cmd);
+		all_free(cmd);
 		exit(0);
 	}
 	path = path_finder(cmd->cmd, cmd->tmp->env);
@@ -27,10 +28,12 @@ void	child_execute_command(t_command *cmd)
 		ft_putstr_fd("command not found: ", 2);
 		ft_putstr_fd(cmd->cmd, 2);
 		ft_putchar_fd('\n', 2);
+		all_free(cmd);
 		exit(127);
 	}
 	execve(path, cmd->args, cmd->tmp->env);
 	perror("execve");
+	all_free(cmd);
 	exit(EXIT_FAILURE);
 }
 
@@ -39,6 +42,7 @@ static void	execute_commands_pipe(char *path, t_command *cmd)
 	execve(path, cmd->args, cmd->tmp->env);
 	perror("execve");
 	free(path);
+	all_free(cmd);
 	exit(126);
 }
 

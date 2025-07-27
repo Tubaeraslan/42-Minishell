@@ -6,7 +6,7 @@
 /*   By: ican <<ican@student.42.fr>>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:04:57 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/27 15:04:27 by ican             ###   ########.fr       */
+/*   Updated: 2025/07/27 18:37:11 by ican             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,7 @@ typedef struct s_command
 }	t_command;
 
 
-void		handle_signals();
+void		handle_signals(t_command *cmd);
 char		**ft_env_dup(char **envp);
 void		parse_input(t_command *command);
 int			is_valid_syntax(char *input);
