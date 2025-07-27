@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_input.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ican <<ican@student.42.fr>>                +#+  +:+       +#+        */
+/*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:37:12 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/26 19:18:19 by ican             ###   ########.fr       */
+/*   Updated: 2025/07/27 12:46:08 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,6 +92,18 @@ static void	token(t_command *command)
 	process_remaining_buffer(command, tk);
 }
 
+int has_any_heredoc(t_command *cmd)
+{
+	t_command *cur = cmd;
+	while (cur)
+	{
+		if (has_heredoc(cur->tmp->input)) // zaten varsa böyle bir fonksiyonun
+			return 1;
+		cur = cur->next;
+	}
+	return 0;
+}
+
 void	parse_input(t_command *command)
 {
 	if (!command->tmp->input || command->tmp->input[0] == '\0')
@@ -103,6 +115,21 @@ void	parse_input(t_command *command)
 		return ;
 	}
 	check_heredoc_and_setup(command);
+	if (g_signal_status == 130)
+	{
+		command->last_exit_code = 130;
+		g_signal_status = 0;
+		free(command->tmp->input);
+		command->tmp->input = NULL;
+		return ;
+	}
+	if (has_any_heredoc(command) && command->heredoc_fd == -1)
+	{
+		command->last_exit_code = 130;
+		free(command->tmp->input);
+		command->tmp->input = NULL;
+		return ;
+	}
 	if (!check_syntax_errors(command))
 		return ;
 	expand_variables(command);

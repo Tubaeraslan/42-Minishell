@@ -3,36 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc_utils.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ican <<ican@student.42.fr>>                +#+  +:+       +#+        */
+/*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/25 15:20:14 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/26 19:30:55 by ican             ###   ########.fr       */
+/*   Updated: 2025/07/27 12:49:57 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-int	heredoc_loop(t_command *cmd, int pipe_write_fd)
-{
-	char	*line;
-
-	while (1)
-	{
-		line = readline("> ");
-		if (!line)
-			return (0);
-		if (ft_strncmp(line, cmd->heredoc_limiter,
-				ft_strlen(cmd->heredoc_limiter) + 1) == 0)
-		{
-			free(line);
-			return (0);
-		}
-		write(pipe_write_fd, line, ft_strlen(line));
-		write(pipe_write_fd, "\n", 1);
-		free(line);
-	}
-	return (1);
-}
 
 char	*extract_limiter(char *input, int i)
 {
@@ -81,10 +59,28 @@ char	*get_heredoc_limiter(char *input)
 	return (NULL);
 }
 
-int	has_heredoc(char *input)
+int has_heredoc(char *input)
 {
-	return (ft_strnstr(input, "<<", ft_strlen(input)) != NULL);
+    int i = 0;
+    int inside_squote = 0;
+    int inside_dquote = 0;
+
+    while (input[i])
+    {
+        if (input[i] == '\'' && !inside_dquote)
+            inside_squote = !inside_squote;
+        else if (input[i] == '\"' && !inside_squote)
+            inside_dquote = !inside_dquote;
+        else if (!inside_squote && !inside_dquote)
+        {
+            if (input[i] == '<' && input[i + 1] == '<')
+                return 1;
+        }
+        i++;
+    }
+    return 0;
 }
+
 t_heredoc	*get_all_heredocs(char *input)
 {
 	t_heredoc	*head = NULL;
@@ -132,21 +128,68 @@ void	free_heredoc_list(t_heredoc *lst)
 void	heredoc_loop_custom(char *limiter, int write_fd)
 {
 	char	*line;
+	size_t	len;
 
 	while (1)
 	{
-		line = readline("> ");
-		if (!line)
+		if (g_signal_status == 130)
 			break;
+
+		write(1, "> ", 2); // prompt elle veriliyor
+		line = get_next_line(0);
+		if (!line || g_signal_status == 130)
+		{
+			free(line);
+			break;
+		}
+
+		// Satır sonundaki newline'i temizle
+		len = ft_strlen(line);
+		if (len > 0 && line[len - 1] == '\n')
+			line[len - 1] = '\0';
+
 		if (ft_strncmp(line, limiter, ft_strlen(limiter) + 1) == 0)
 		{
 			free(line);
 			break;
 		}
+
 		write(write_fd, line, ft_strlen(line));
 		write(write_fd, "\n", 1);
 		free(line);
 	}
+}
+
+void	child_signal_handler2(int sig)
+{
+	if (sig == SIGINT)
+	{
+		g_signal_status = 130;
+		signal(SIGINT, SIG_IGN);
+	}
+}
+
+void	child_signal_handler(int sig)
+{
+	if (sig == SIGINT)
+	{
+		g_signal_status = 130;
+		printf("\n");
+		exit(g_signal_status);
+	}
+}
+
+void set_signal(int i)
+{
+	if (i == 0)
+	{
+		signal(SIGINT, child_signal_handler);
+	}
+	if (i == 1)
+	{
+		signal(SIGINT, child_signal_handler2);
+	}
+	
 }
 
 void	check_heredoc_and_setup(t_command *command)
@@ -164,23 +207,63 @@ void	check_heredoc_and_setup(t_command *command)
 			while (tmp)
 			{
 				int pipe_fd[2];
+				pid_t pid;
+
 				if (pipe(pipe_fd) == -1)
 				{
-					free_heredoc_list(heredocs);
-					all_free(command);
 					perror("pipe");
 					exit(EXIT_FAILURE);
 				}
-				// Her heredoc için ayrı ayrı input al
-				heredoc_loop_custom(tmp->limiter, pipe_fd[1]);
-				close(pipe_fd[1]);
-				cmd->heredoc_fd = pipe_fd[0];
-				cmd->is_heredoc = 1;
+
+				pid = fork();
+				if (pid < 0)
+				{
+					perror("fork");
+					exit(EXIT_FAILURE);
+				}
+				else if (pid == 0)
+				{
+					// Child process
+					close(pipe_fd[0]);
+					set_signal(0);
+					heredoc_loop_custom(tmp->limiter, pipe_fd[1]);
+					close(pipe_fd[1]);
+					exit(EXIT_SUCCESS);
+				}
+				else
+				{
+					// Parent process
+					set_signal(1);
+					close(pipe_fd[1]);
+
+					int status;
+					waitpid(pid, &status, 0);
+
+					if (WIFSIGNALED(status))
+					{
+						// Eğer daha önce açık heredoc_fd varsa kapat
+						if (cmd->heredoc_fd != -1)
+							close(cmd->heredoc_fd);
+						cmd->heredoc_fd = -1;
+						cmd->is_heredoc = 0;
+						g_signal_status = 130;
+						printf("[DEBUG] Child process killed by signal. g_signal_status=%d, heredoc_fd=%d\n",
+							g_signal_status, cmd->heredoc_fd);
+						free_heredoc_list(heredocs);
+						return;
+					}
+
+					// Önceden açık heredoc_fd varsa kapat (fd sızıntısı önleme)
+					if (cmd->heredoc_fd != -1)
+						close(cmd->heredoc_fd);
+					cmd->heredoc_fd = pipe_fd[0];
+					cmd->is_heredoc = 1;
+				}
 				tmp = tmp->next;
 			}
-			// Heredoc listesi temizlenmeli
 			free_heredoc_list(heredocs);
 		}
 		cmd = cmd->next;
 	}
+	signal(SIGINT,sigint_handler);
 }

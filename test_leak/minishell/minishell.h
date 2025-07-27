@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ican <<ican@student.42.fr>>                +#+  +:+       +#+        */
+/*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:04:57 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/26 19:00:09 by ican             ###   ########.fr       */
+/*   Updated: 2025/07/27 12:35:58 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@
 # include <fcntl.h>
 # include <errno.h>
 # include <sys/stat.h>
+#include "get_next_line/get_next_line.h"
 
 //extern
 extern int	g_signal_status;
@@ -162,6 +163,7 @@ void		expand_pid(t_expand *ex);
 int			read_varname(char *input, int *i, char *varname);
 int			check_syntax_errors(t_command *command);
 void		check_heredoc_and_setup(t_command *command);
+int	has_heredoc(char *input);
 char		*ft_strncpy(char *dst, const char *src, size_t len);
 void		free_two_dimension(char **arg);
 void 		all_free(t_command *cmd);
