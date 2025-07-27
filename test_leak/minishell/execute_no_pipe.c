@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_no_pipe.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ican <<ican@student.42.fr>>                +#+  +:+       +#+        */
+/*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 20:42:34 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/27 15:05:24 by ican             ###   ########.fr       */
+/*   Updated: 2025/07/27 18:24:36 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,8 @@ void	execute_a_token(t_command *command)
 		handle_fork_error(command);
 	else if (pid == 0)
 	{
+		signal(SIGINT, SIG_DFL); // Child sinyali alsın
+		signal(SIGQUIT, SIG_DFL); 
 		handle_redirections(command);
 		execute_child_process(command);
 		all_free(command);
@@ -57,6 +59,23 @@ void	execute_a_token(t_command *command)
 	else
 	{
 		waitpid(pid, &status, 0);
-		command->last_exit_code = WEXITSTATUS(status);
+		if (WIFSIGNALED(status))
+		{
+			int	sig = WTERMSIG(status);
+			if (sig == SIGINT)
+			{
+				write(1, "\r", 1);
+				command->last_exit_code = 130;
+			}
+			else if (sig == SIGQUIT)
+			{
+				write(1, "Quit (core dumped)\n", 19);
+				command->last_exit_code = 131; // SIGQUIT çıkış kodu genelde 131'dir
+			}
+			else
+				command->last_exit_code = 128 + sig;
+		}
+		else if (WIFEXITED(status))
+			command->last_exit_code = WEXITSTATUS(status);
 	}
 }
