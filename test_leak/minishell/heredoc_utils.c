@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/25 15:20:14 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/27 12:49:57 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/27 13:32:15 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -247,8 +247,6 @@ void	check_heredoc_and_setup(t_command *command)
 						cmd->heredoc_fd = -1;
 						cmd->is_heredoc = 0;
 						g_signal_status = 130;
-						printf("[DEBUG] Child process killed by signal. g_signal_status=%d, heredoc_fd=%d\n",
-							g_signal_status, cmd->heredoc_fd);
 						free_heredoc_list(heredocs);
 						return;
 					}
