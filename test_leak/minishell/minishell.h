@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ican <<ican@student.42.fr>>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:04:57 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/27 12:35:58 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/27 15:04:27 by ican             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,7 +125,7 @@ void		execute_commands(t_command *command);
 int			is_built(char *arg);
 pid_t		handle_fork(t_command *cmd, int prev_fd, int *fd);
 void		execute_builtin_with_redir(t_command *command);
-void		handle_fork_error(void);
+void		handle_fork_error(t_command *command);
 int			handle_redirections(t_command *cmd);
 void		execute_built(t_command *cmd);
 void		execute_a_token(t_command *command);

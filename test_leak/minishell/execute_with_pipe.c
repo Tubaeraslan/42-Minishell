@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_with_pipe.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ican <<ican@student.42.fr>>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:36:30 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/25 15:32:06 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/27 15:31:34 by ican             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,10 @@ int	execute_many_token(t_command *command)
 	cmd_count = count_commands(cmd);
 	pids = malloc(sizeof(pid_t) * cmd_count);
 	if (!pids)
+	{
+		all_free(command);
 		return (perror("malloc"), EXIT_FAILURE);
+	}
 	exit_code = execute_pipeline(cmd, pids);
 	free(pids);
 	if (exit_code == -1)

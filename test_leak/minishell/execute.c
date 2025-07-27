@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ican <<ican@student.42.fr>>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 20:34:23 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/27 12:45:28 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/27 15:12:40 by ican             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,9 +46,10 @@ void	exec_command(t_command *command, char *path)
 	exit(126);
 }
 
-void	handle_fork_error(void)
+void	handle_fork_error(t_command *command)
 {
 	perror("fork");
+	all_free(command);
 	exit(EXIT_FAILURE);
 }
 
@@ -87,4 +88,5 @@ void	execute_commands(t_command *command)
 	}
 	reset_flags(command);
 	free_command_fields(command);
+	
 }

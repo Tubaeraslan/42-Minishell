@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_no_pipe.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ican <<ican@student.42.fr>>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 20:42:34 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/26 12:49:32 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/27 15:05:24 by ican             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,11 +46,12 @@ void	execute_a_token(t_command *command)
 	}
 	pid = fork();
 	if (pid == -1)
-		handle_fork_error();
+		handle_fork_error(command);
 	else if (pid == 0)
 	{
 		handle_redirections(command);
 		execute_child_process(command);
+		all_free(command);
 		exit(EXIT_FAILURE);
 	}
 	else

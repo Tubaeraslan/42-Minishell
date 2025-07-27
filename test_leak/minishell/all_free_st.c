@@ -6,7 +6,7 @@
 /*   By: ican <<ican@student.42.fr>>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/21 16:09:21 by ican              #+#    #+#             */
-/*   Updated: 2025/07/26 18:53:44 by ican             ###   ########.fr       */
+/*   Updated: 2025/07/27 17:27:57 by ican             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ void free_two_dimension(char **arg)
     int i;
 
     i = 0;
-    if (!arg || !*arg)
+    if (!arg)
         return ;
     while (arg[i])
     {
@@ -37,6 +37,8 @@ void    free_data(t_data *tmp)
     free_two_dimension(tmp->env);
     free(tmp->input);
         tmp->input = NULL;
+    free(tmp);
+    tmp = NULL;
 }
 
 
@@ -44,8 +46,11 @@ void all_free(t_command *cmd)
 {
     if (!cmd)
         return;
-    //if ((comd->tokens && comd->tokens[0]) || comd->tokens != NULL)
-      //  clear_tokens(comd);
+    if ((cmd->tokens && cmd->tokens[0]) || cmd->tokens != NULL)
+    {
+        clear_tokens(cmd);
+        cmd->tokens = NULL;
+    }
     if (cmd->cmd && ft_strlen(cmd->cmd) > 0)
     {
         free(cmd->cmd);
@@ -58,6 +63,9 @@ void all_free(t_command *cmd)
     }
     clear_command_data(cmd);
     free_data(cmd->tmp);
+    cmd->tmp = NULL;
+    free(cmd);
+    cmd = NULL;
 }
 
 //parsing için lazım

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   child_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ican <<ican@student.42.fr>>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/19 12:51:33 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/25 15:14:12 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/27 16:07:26 by ican             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ static void	setup_stdout(t_command *cmd, int *fd)
 		if (dup2(fd[1], STDOUT_FILENO) == -1)
 		{
 			perror("dup2 fd[1]");
+			all_free(cmd);
 			exit(1);
 		}
 		close(fd[1]);
@@ -29,14 +30,21 @@ static void	setup_stdout(t_command *cmd, int *fd)
 static void	handle_child(t_command *cmd, int prev_fd, int *fd)
 {
 	if (cmd->parsing_error)
+	{
+		all_free(cmd);
 		exit(1);
+	}
 	setup_stdin(cmd, prev_fd);
 	setup_stdout(cmd, fd);
 	if (handle_redirections(cmd) == -1)
+	{
+		all_free(cmd);
 		exit(1);
+	}
 	if (is_built(cmd->cmd))
 	{
 		execute_built(cmd);
+		all_free(cmd);
 		exit(cmd->last_exit_code);
 	}
 	exec_external_or_exit(cmd);
@@ -49,6 +57,7 @@ pid_t	handle_fork(t_command *cmd, int prev_fd, int *fd)
 	pid = fork();
 	if (pid == -1)
 	{
+		all_free(cmd);
 		perror("fork");
 		exit(EXIT_FAILURE);
 	}
