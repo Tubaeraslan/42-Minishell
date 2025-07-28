@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:16:12 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/16 14:41:02 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/28 15:28:30 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,11 +32,12 @@ static int	numeric_control(char *arg)
 	return (0);
 }
 
-static void	exit_program(t_command *cmd, int exit_code)
+static void exit_program(t_command *cmd, int exit_code)
 {
-	(void)cmd;
-	rl_clear_history();
-	exit(exit_code);
+    if (cmd)
+        all_free(cmd);         // tüm malloc'lanmış yapıları temizle
+    rl_clear_history();        // readline belleğini temizle
+    exit(exit_code);           // programdan çık
 }
 
 int	ft_exit(t_command *cmd)

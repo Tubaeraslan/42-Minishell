@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 20:42:34 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/27 18:24:36 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/28 16:58:33 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,9 +26,10 @@ void	execute_child_process(t_command *command)
 	{
 		ft_putstr_fd(command->cmd, 2);
 		ft_putstr_fd(": command not found\n", 2);
+		all_free(command);
 		exit(127);
 	}
-	check_executable(path, &st);
+	check_executable(path, &st,command);
 	exec_command(command, path);
 }
 

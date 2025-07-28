@@ -3,22 +3,23 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ican <<ican@student.42.fr>>                +#+  +:+       +#+        */
+/*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 20:34:23 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/27 15:12:40 by ican             ###   ########.fr       */
+/*   Updated: 2025/07/28 17:47:30 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	check_executable(char *path, struct stat *st)
+void	check_executable(char *path, struct stat *st,t_command *cmd)
 {
 	if (stat(path, st) == -1)
 	{
 		ft_putstr_fd(path, 2);
 		ft_putstr_fd(": No such file or directory\n", 2);
 		free(path);
+		all_free(cmd);
 		exit(127);
 	}
 	if (S_ISDIR(st->st_mode))
@@ -26,6 +27,7 @@ void	check_executable(char *path, struct stat *st)
 		ft_putstr_fd(path, 2);
 		ft_putstr_fd(": Is a directory\n", 2);
 		free(path);
+		all_free(cmd);
 		exit(126);
 	}
 	if (!(st->st_mode & S_IXUSR))
@@ -33,6 +35,7 @@ void	check_executable(char *path, struct stat *st)
 		ft_putstr_fd(path, 2);
 		ft_putstr_fd(": Permission denied\n", 2);
 		free(path);
+		all_free(cmd);
 		exit(126);
 	}
 }
@@ -76,7 +79,11 @@ void	reset_flags(t_command *command)
 void	execute_commands(t_command *command)
 {
 	if (!command || command->token_count == 0)
-		return ;
+    {
+        free_command_fields(command);  // args, cmd gibi alanları temizle
+        clear_tokens(command);         // tokenlar varsa temizle
+        return ;
+    }
 	if (!command->is_pipe)
 	{
 		if (!command->parsing_error)
@@ -88,5 +95,4 @@ void	execute_commands(t_command *command)
 	}
 	reset_flags(command);
 	free_command_fields(command);
-	
 }

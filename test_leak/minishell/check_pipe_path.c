@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/25 15:26:56 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/25 15:31:08 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/28 16:56:46 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ char	*get_command_path(t_command *cmd)
 	return (path);
 }
 
-void	check_path_validity(char *path)
+void	check_path_validity(char *path, t_command *command)
 {
 	struct stat	st;
 
@@ -61,6 +61,7 @@ void	check_path_validity(char *path)
 		ft_putstr_fd(path, 2);
 		ft_putstr_fd(": No such file or directory\n", 2);
 		free(path);
+		all_free(command);
 		exit(127);
 	}
 	if (S_ISDIR(st.st_mode))
@@ -68,6 +69,7 @@ void	check_path_validity(char *path)
 		ft_putstr_fd(path, 2);
 		ft_putstr_fd(": Is a directory\n", 2);
 		free(path);
+		all_free(command);
 		exit(126);
 	}
 	if (!(st.st_mode & S_IXUSR))
@@ -75,6 +77,7 @@ void	check_path_validity(char *path)
 		ft_putstr_fd(path, 2);
 		ft_putstr_fd(": Permission denied\n", 2);
 		free(path);
+		all_free(command);
 		exit(126);
 	}
 }

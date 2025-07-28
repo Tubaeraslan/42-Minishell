@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:36:30 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/28 13:40:16 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/28 16:55:52 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ void	exec_external_or_exit(t_command *cmd)
 	char	*path;
 
 	path = get_command_path(cmd);
-	check_path_validity(path);
+	check_path_validity(path,cmd);
 	execute_commands_pipe(path, cmd);
 }
 
