@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_with_pipe.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ican <<ican@student.42.fr>>                +#+  +:+       +#+        */
+/*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:36:30 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/27 18:59:23 by ican             ###   ########.fr       */
+/*   Updated: 2025/07/28 13:40:16 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,18 +66,32 @@ int	wait_for_children(pid_t *pids, int count, pid_t last_pid)
 	waited = 0;
 	(void)pids;
 	while (waited < count)
-	{
-		pid = wait(&status);
-		if (pid == -1)
-			break ;
-		if (pid == last_pid)
-		{
-			if (WIFEXITED(status))
-				exit_code = WEXITSTATUS(status);
-			else if (WIFSIGNALED(status))
-				exit_code = 128 + WTERMSIG(status);
-		}
-		waited++;
+{
+    pid = wait(&status);
+    if (pid == -1)
+        break;
+    if (pid == last_pid)
+    {
+        if (WIFSIGNALED(status))
+        {
+            int sig = WTERMSIG(status);
+            if (sig == SIGINT)
+            {
+                write(1, "\r", 1);
+                exit_code = 130;
+            }
+            else if (sig == SIGQUIT)
+            {
+                write(1, "Quit (core dumped)\n", 19);
+                exit_code = 131;
+            }
+            else
+                exit_code = 128 + sig;
+        }
+        else if (WIFEXITED(status))
+            exit_code = WEXITSTATUS(status);
+    }
+    waited++;
 	}
 	return (exit_code);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ican <<ican@student.42.fr>>                +#+  +:+       +#+        */
+/*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:04:40 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/27 18:37:23 by ican             ###   ########.fr       */
+/*   Updated: 2025/07/28 14:12:37 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,7 @@ int	main(int argc, char **argv, char **envp)
 	(void)argv;
 	init_pointer(&command, &shell);
 	init_command(command, shell, envp);
-	handle_signals(command);
+	handle_signals();
 	while (1)
 	{
 		g_signal_status = 0;
@@ -100,7 +100,6 @@ int	main(int argc, char **argv, char **envp)
 		}
 		parse_input(command);
 		execute_commands(command);
-		//all_free(command); freeelediğimiz şeyi bul ve sonuna nul ekle yoksa sonra allfree yi bzouyor.
 	}
 	return (0);
 }

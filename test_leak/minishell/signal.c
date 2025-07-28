@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   signal.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ican <<ican@student.42.fr>>                +#+  +:+       +#+        */
+/*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:07:21 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/27 18:35:46 by ican             ###   ########.fr       */
+/*   Updated: 2025/07/28 12:48:30 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,9 +22,9 @@ void	sigint_handler(int sig)
 	g_signal_status = 130;
 }
 
-void	handle_signals(t_command *cmd)
+void	handle_signals(void)
 {
 	signal(SIGINT, sigint_handler);
-	all_free(cmd);
+	//all_free(cmd);
 	signal(SIGQUIT, SIG_IGN);
 }

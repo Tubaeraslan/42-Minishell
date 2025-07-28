@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:37:12 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/27 12:46:08 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/28 12:59:52 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,16 +119,26 @@ void	parse_input(t_command *command)
 	{
 		command->last_exit_code = 130;
 		g_signal_status = 0;
-		free(command->tmp->input);
-		command->tmp->input = NULL;
-		return ;
+		if (command->tmp->input)
+		{
+			free(command->tmp->input);
+			command->tmp->input = NULL;
+		}
+		command->is_heredoc = 0;
+		command->heredoc_fd = -1;
+		return;
 	}
 	if (has_any_heredoc(command) && command->heredoc_fd == -1)
 	{
 		command->last_exit_code = 130;
-		free(command->tmp->input);
-		command->tmp->input = NULL;
-		return ;
+		if (command->tmp->input)
+		{
+			free(command->tmp->input);
+			command->tmp->input = NULL;
+		}
+		command->is_heredoc = 0;
+		command->heredoc_fd = -1;
+		return;
 	}
 	if (!check_syntax_errors(command))
 		return ;

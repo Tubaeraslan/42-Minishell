@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ican <<ican@student.42.fr>>                +#+  +:+       +#+        */
+/*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:04:57 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/27 18:37:11 by ican             ###   ########.fr       */
+/*   Updated: 2025/07/28 12:49:14 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,7 @@ typedef struct s_command
 }	t_command;
 
 
-void		handle_signals(t_command *cmd);
+void		handle_signals(void);
 char		**ft_env_dup(char **envp);
 void		parse_input(t_command *command);
 int			is_valid_syntax(char *input);
@@ -154,7 +154,6 @@ int			infile_error(t_command *cmd, char *file, const char *msg, int ex_c);
 int			outfile_error(t_command *command, char *file, const char *msg, int ex_c);
 void		copy_tokens(t_command *next_cmd, char **tokens, int start, int count);
 void		setup_stdin(t_command *cmd, int prev_fd);
-int			heredoc_loop(t_command *cmd, int pipe_write_fd);
 void		check_path_validity(char *path);
 char		*get_command_path(t_command *cmd);
 int			count_commands(t_command *cmd);
