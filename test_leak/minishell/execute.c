@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 20:34:23 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/29 14:03:01 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/29 14:58:50 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,24 @@ void	reset_flags(t_command *command)
 	}
 }
 
+void	free_command_list_except_first(t_command *command)
+{
+	t_command	*tmp;
+	t_command	*next_cmd;
+
+	if (!command)
+		return ;
+	tmp = command->next;
+	command->next = NULL;
+	while (tmp)
+	{
+		free_command_fields(tmp);
+		next_cmd = tmp->next;
+		free(tmp);
+		tmp = next_cmd;
+	}
+}
+
 void	execute_commands(t_command *command)
 {
 	if (!command || command->token_count == 0)
@@ -92,6 +110,9 @@ void	execute_commands(t_command *command)
 	else
 	{
 		command->last_exit_code = execute_many_token(command);
+		reset_flags(command);
+		free_command_list_except_first(command);
+		return;
 	}
 	reset_flags(command);
 	free_command_fields(command);
