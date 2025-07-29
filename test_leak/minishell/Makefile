@@ -11,7 +11,8 @@ SRC = main.c signal.c env_function.c parse_input.c pipe_syntax.c syntax_check.c 
 		built-in.c cd.c echo.c env.c exit.c export.c pwd.c unset.c env_utils.c \
 		execute_with_pipe.c all_free_st.c cd_utils.c child_utils.c parse_function.c \
 		stdin_utils.c heredoc_utils.c check_pipe_path.c expand_utils.c path.c \
-		get_next_line/get_next_line.c get_next_line/get_next_line_utils.c
+		get_next_line/get_next_line.c get_next_line/get_next_line_utils.c \
+		parse_conditions.c heredoc_read_input.c heredoc_fork.c export_utils.c
 OBJ = $(SRC:.c=.o)
 
 all:$(LIBFT) $(NAME)

@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/19 12:51:33 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/28 16:44:24 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/29 12:53:23 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ static void	setup_stdout(t_command *cmd, int *fd)
 static void	handle_child(t_command *cmd, int prev_fd, int *fd)
 {
 	signal(SIGINT, SIG_DFL);
-    signal(SIGQUIT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
 	if (cmd->parsing_error)
 	{
 		all_free(cmd);

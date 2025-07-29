@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 20:42:34 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/28 16:58:33 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/29 14:02:15 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,42 @@ void	execute_child_process(t_command *command)
 		all_free(command);
 		exit(127);
 	}
-	check_executable(path, &st,command);
+	check_executable(path, &st, command);
 	exec_command(command, path);
+}
+
+static void	run_child_process(t_command *command)
+{
+	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
+	handle_redirections(command);
+	execute_child_process(command);
+	all_free(command);
+	exit(EXIT_FAILURE);
+}
+
+static void	set_exit_code_from_status(t_command *command, int status)
+{
+	int	sig;
+
+	if (WIFSIGNALED(status))
+	{
+		sig = WTERMSIG(status);
+		if (sig == SIGINT)
+		{
+			write(1, "\r", 1);
+			command->last_exit_code = 130;
+		}
+		else if (sig == SIGQUIT)
+		{
+			write(1, "Quit (core dumped)\n", 19);
+			command->last_exit_code = 131;
+		}
+		else
+			command->last_exit_code = 128 + sig;
+	}
+	else if (WIFEXITED(status))
+		command->last_exit_code = WEXITSTATUS(status);
 }
 
 void	execute_a_token(t_command *command)
@@ -40,7 +74,7 @@ void	execute_a_token(t_command *command)
 
 	if (!command || !command->cmd)
 		return ;
-	if (is_built(command->cmd) == 1)
+	if (is_built(command->cmd))
 	{
 		execute_builtin_with_redir(command);
 		return ;
@@ -49,34 +83,10 @@ void	execute_a_token(t_command *command)
 	if (pid == -1)
 		handle_fork_error(command);
 	else if (pid == 0)
-	{
-		signal(SIGINT, SIG_DFL); // Child sinyali alsın
-		signal(SIGQUIT, SIG_DFL); 
-		handle_redirections(command);
-		execute_child_process(command);
-		all_free(command);
-		exit(EXIT_FAILURE);
-	}
+		run_child_process(command);
 	else
 	{
 		waitpid(pid, &status, 0);
-		if (WIFSIGNALED(status))
-		{
-			int	sig = WTERMSIG(status);
-			if (sig == SIGINT)
-			{
-				write(1, "\r", 1);
-				command->last_exit_code = 130;
-			}
-			else if (sig == SIGQUIT)
-			{
-				write(1, "Quit (core dumped)\n", 19);
-				command->last_exit_code = 131; // SIGQUIT çıkış kodu genelde 131'dir
-			}
-			else
-				command->last_exit_code = 128 + sig;
-		}
-		else if (WIFEXITED(status))
-			command->last_exit_code = WEXITSTATUS(status);
+		set_exit_code_from_status(command, status);
 	}
 }

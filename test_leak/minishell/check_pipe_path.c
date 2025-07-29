@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/25 15:26:56 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/28 16:56:46 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/29 12:52:25 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,32 +52,23 @@ char	*get_command_path(t_command *cmd)
 	return (path);
 }
 
-void	check_path_validity(char *path, t_command *command)
+static void	print_err_and_exit(char *path, char *msg, int code, t_command *cmd)
+{
+	ft_putstr_fd(path, 2);
+	ft_putstr_fd(msg, 2);
+	free(path);
+	all_free(cmd);
+	exit(code);
+}
+
+void	check_path_validity(char *path, t_command *cmd)
 {
 	struct stat	st;
 
 	if (stat(path, &st) != 0)
-	{
-		ft_putstr_fd(path, 2);
-		ft_putstr_fd(": No such file or directory\n", 2);
-		free(path);
-		all_free(command);
-		exit(127);
-	}
+		print_err_and_exit(path, ": No such file or directory\n", 127, cmd);
 	if (S_ISDIR(st.st_mode))
-	{
-		ft_putstr_fd(path, 2);
-		ft_putstr_fd(": Is a directory\n", 2);
-		free(path);
-		all_free(command);
-		exit(126);
-	}
+		print_err_and_exit(path, ": Is a directory\n", 126, cmd);
 	if (!(st.st_mode & S_IXUSR))
-	{
-		ft_putstr_fd(path, 2);
-		ft_putstr_fd(": Permission denied\n", 2);
-		free(path);
-		all_free(command);
-		exit(126);
-	}
+		print_err_and_exit(path, ": Permission denied\n", 126, cmd);
 }

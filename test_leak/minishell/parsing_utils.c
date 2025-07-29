@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 20:26:09 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/25 15:49:32 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/29 13:08:25 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,14 +34,14 @@ int	handle_infile(t_command *cmd, char **tokens, int *i)
 	return (1);
 }
 
-int	handle_outfile(t_command *command, char **tokens, int *i, int append)
+int	handle_outfile(t_command *cmd, char **tokens, int *i, int append)
 {
 	int		fd;
 	char	*filename;
 	char	*dup;
 
 	if (!tokens[*i + 1])
-		return (outfile_error(command, NULL,
+		return (outfile_error(cmd, NULL,
 				"syntax error near unexpected token `newline'\n", 2));
 	filename = tokens[*i + 1];
 	if (append)
@@ -49,15 +49,15 @@ int	handle_outfile(t_command *command, char **tokens, int *i, int append)
 	else
 		fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (fd < 0)
-		return (outfile_error(command, filename, strerror(errno), 1));
+		return (outfile_error(cmd, filename, strerror(errno), 1));
 	close(fd);
 	dup = ft_strdup(filename);
 	if (!dup)
-		return (outfile_error(command, filename,
+		return (outfile_error(cmd, filename,
 				": memory allocation failed", 1));
-	free(command->outfile);
-	command->outfile = dup;
-	command->is_append = append;
+	free(cmd->outfile);
+	cmd->outfile = dup;
+	cmd->is_append = append;
 	*i += 2;
 	return (1);
 }

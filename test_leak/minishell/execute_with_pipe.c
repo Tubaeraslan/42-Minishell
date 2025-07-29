@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:36:30 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/28 16:55:52 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/29 13:54:07 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ void	exec_external_or_exit(t_command *cmd)
 	char	*path;
 
 	path = get_command_path(cmd);
-	check_path_validity(path,cmd);
+	check_path_validity(path, cmd);
 	execute_commands_pipe(path, cmd);
 }
 
@@ -66,32 +66,13 @@ int	wait_for_children(pid_t *pids, int count, pid_t last_pid)
 	waited = 0;
 	(void)pids;
 	while (waited < count)
-{
-    pid = wait(&status);
-    if (pid == -1)
-        break;
-    if (pid == last_pid)
-    {
-        if (WIFSIGNALED(status))
-        {
-            int sig = WTERMSIG(status);
-            if (sig == SIGINT)
-            {
-                write(1, "\r", 1);
-                exit_code = 130;
-            }
-            else if (sig == SIGQUIT)
-            {
-                write(1, "Quit (core dumped)\n", 19);
-                exit_code = 131;
-            }
-            else
-                exit_code = 128 + sig;
-        }
-        else if (WIFEXITED(status))
-            exit_code = WEXITSTATUS(status);
-    }
-    waited++;
+	{
+		pid = wait(&status);
+		if (pid == -1)
+			break ;
+		if (pid == last_pid)
+			exit_code = get_exit_code_from_status(status);
+		waited++;
 	}
 	return (exit_code);
 }

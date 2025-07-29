@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:04:57 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/28 16:58:21 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/29 14:03:43 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,9 +24,8 @@
 # include <fcntl.h>
 # include <errno.h>
 # include <sys/stat.h>
-#include "get_next_line/get_next_line.h"
+# include "get_next_line/get_next_line.h"
 
-//extern
 extern int	g_signal_status;
 
 typedef struct s_data
@@ -62,9 +61,9 @@ typedef struct s_redirects
 
 typedef struct s_heredoc
 {
-	char	*limiter;
-	int		index; // input içindeki konumu
-	struct s_heredoc *next;
+	char				*limiter;
+	int					index;
+	struct s_heredoc	*next;
 }	t_heredoc;
 
 typedef struct s_tokenizer
@@ -79,28 +78,27 @@ typedef struct s_tokenizer
 
 typedef struct s_command
 {
-	char **tokens;
-	int token_count;
-	char *cmd;
-	char **args;
-	char *infile;
-	char *outfile;
-	int is_append;
-	t_redirects *redirects;
+	char				**tokens;
+	int					token_count;
+	char				*cmd;
+	char				**args;
+	char				*infile;
+	char				*outfile;
+	int					is_append;
+	t_redirects			*redirects;
 	struct s_command	*next;
-	t_data *tmp;
-	char *heredoc_limiter;
-	t_heredoc *heredocs;
-	int is_heredoc;
-	int heredoc_fd;
-	int is_pipe;
-	int last_exit_code;
-	int parsing_error;
-	int error_printed;
-	char **export_list;
-	t_tokenizer tokenizer;
+	t_data				*tmp;
+	char				*heredoc_limiter;
+	t_heredoc			*heredocs;
+	int					is_heredoc;
+	int					heredoc_fd;
+	int					is_pipe;
+	int					last_exit_code;
+	int					parsing_error;
+	int					error_printed;
+	char				**export_list;
+	t_tokenizer			tokenizer;
 }	t_command;
-
 
 void		handle_signals(void);
 char		**ft_env_dup(char **envp);
@@ -117,7 +115,7 @@ int			process_operator(t_command *command, t_tokenizer *tk);
 void		add_token(t_command *command, char *buffer);
 void		parsing(t_command *command);
 int			handle_infile(t_command *command, char **tokens, int *i);
-int			handle_outfile(t_command *command, char **tokens, int *i, int append);
+int			handle_outfile(t_command *cmd, char **tokens, int *i, int append);
 int			handle_heredoc(t_command *command, char **tokens, int *i);
 t_command	*create_next_command(t_command *command, char **tokens, int index);
 void		update_args_and_cmd(t_command *command, char **args, int count);
@@ -131,7 +129,7 @@ void		execute_built(t_command *cmd);
 void		execute_a_token(t_command *command);
 void		execute_child_process(t_command *command);
 void		ft_echo(t_command *cmd);
-void		ft_pwd();
+void		ft_pwd(void);
 void		ft_env(t_command *cmd);
 int			ft_exit(t_command *cmd);
 void		ft_export(t_command *cmd);
@@ -151,8 +149,8 @@ int			execute_pipeline(t_command *cmd, pid_t *pids);
 int			wait_for_children(pid_t *pids, int count, pid_t last_pid);
 void		parse_error(t_command *command, const char *msg);
 int			infile_error(t_command *cmd, char *file, const char *msg, int ex_c);
-int			outfile_error(t_command *command, char *file, const char *msg, int ex_c);
-void		copy_tokens(t_command *next_cmd, char **tokens, int start, int count);
+int			outfile_error(t_command *cmd, char *f, const char *msg, int ex_c);
+void		copy_tokens(t_command *n_cmd, char **tokens, int start, int count);
 void		setup_stdin(t_command *cmd, int prev_fd);
 void		check_path_validity(char *path, t_command *command);
 char		*get_command_path(t_command *cmd);
@@ -162,14 +160,27 @@ void		expand_pid(t_expand *ex);
 int			read_varname(char *input, int *i, char *varname);
 int			check_syntax_errors(t_command *command);
 void		check_heredoc_and_setup(t_command *command);
-int	has_heredoc(char *input);
+int			is_heredoc(char *input);
+char		*extract_limiter(char *input, int i);
+int			has_any_heredoc(t_command *cmd);
+int			check_heredoc_conditions(t_command *command);
+void		set_signal(int i);
+void		heredoc_loop_custom(char *limiter, int write_fd);
+void		add_heredoc_node(t_heredoc **h, t_heredoc **l, char *input, int *i);
+int			find_in_env(char **env, char *var);
+int			is_in_list(char **list, char *var);
+void		update_export(char ***export_list, char *var);
+int			get_exit_code_from_status(int status);
+void		print_declare_line(char *env);
 char		*ft_strncpy(char *dst, const char *src, size_t len);
 void		free_two_dimension(char **arg);
-void 		all_free(t_command *cmd);
+void		all_free(t_command *cmd);
 void		clear_command_data(t_command *cmd);
 void		check_executable(char *path, struct stat *st, t_command *cmd);
 void		exec_command(t_command *command, char *path);
+void		process_heredoc_list(t_command *cmd, t_heredoc *heredocs);
 void		free_data(t_data *tmp);
 void		free_old_tokens(t_command *command);
 void		free_command_fields(t_command *command);
+void		free_heredoc_list(t_heredoc *lst);
 #endif

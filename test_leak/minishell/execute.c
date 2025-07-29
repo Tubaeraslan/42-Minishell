@@ -6,13 +6,13 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 20:34:23 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/28 17:47:30 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/29 14:03:01 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	check_executable(char *path, struct stat *st,t_command *cmd)
+void	check_executable(char *path, struct stat *st, t_command *cmd)
 {
 	if (stat(path, st) == -1)
 	{
@@ -79,11 +79,11 @@ void	reset_flags(t_command *command)
 void	execute_commands(t_command *command)
 {
 	if (!command || command->token_count == 0)
-    {
-        free_command_fields(command);  // args, cmd gibi alanları temizle
-        clear_tokens(command);         // tokenlar varsa temizle
-        return ;
-    }
+	{
+		free_command_fields(command);
+		clear_tokens(command);
+		return ;
+	}
 	if (!command->is_pipe)
 	{
 		if (!command->parsing_error)
