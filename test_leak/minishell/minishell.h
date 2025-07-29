@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:04:57 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/29 14:03:43 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/29 18:30:18 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,7 @@ typedef struct s_tokenizer
 
 typedef struct s_command
 {
+	pid_t   *pids;
 	char				**tokens;
 	int					token_count;
 	char				*cmd;
@@ -97,6 +98,7 @@ typedef struct s_command
 	int					parsing_error;
 	int					error_printed;
 	char				**export_list;
+	int is_free;
 	t_tokenizer			tokenizer;
 }	t_command;
 
@@ -183,4 +185,7 @@ void		free_data(t_data *tmp);
 void		free_old_tokens(t_command *command);
 void		free_command_fields(t_command *command);
 void		free_heredoc_list(t_heredoc *lst);
+void		free_command_list_except_first(t_command *command);
+void		free_redirects(t_redirects *redir);
+void		free_heredocs(t_heredoc *heredoc);
 #endif

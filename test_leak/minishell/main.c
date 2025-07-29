@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:04:40 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/29 14:54:14 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/29 19:41:04 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,8 @@ void	init_command(t_command *command, t_data *shell, char **envp)
 	command->parsing_error = 0;
 	command->error_printed = 0;
 	command->export_list = NULL;
+	command->is_free = 0;
+	command->pids = NULL;
 	ft_bzero(&command->tokenizer, sizeof(t_tokenizer));
 }
 

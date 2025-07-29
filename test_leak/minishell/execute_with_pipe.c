@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:36:30 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/29 13:54:07 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/29 18:31:11 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,21 +79,20 @@ int	wait_for_children(pid_t *pids, int count, pid_t last_pid)
 
 int	execute_many_token(t_command *command)
 {
-	t_command	*cmd;
-	int			cmd_count;
-	pid_t		*pids;
-	int			exit_code;
+	int	cmd_count;
+	int	exit_code;
 
-	cmd = command;
-	cmd_count = count_commands(cmd);
-	pids = malloc(sizeof(pid_t) * cmd_count);
-	if (!pids)
+	cmd_count = count_commands(command);
+	command->pids = malloc(sizeof(pid_t) * cmd_count);
+	if (!command->pids)
 	{
 		all_free(command);
 		return (perror("malloc"), EXIT_FAILURE);
 	}
-	exit_code = execute_pipeline(cmd, pids);
-	free(pids);
+	exit_code = execute_pipeline(command, command->pids);
+	free(command->pids);
+	command->pids = NULL;
+
 	if (exit_code == -1)
 		return (EXIT_FAILURE);
 	else

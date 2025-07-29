@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/19 12:51:33 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/29 12:53:23 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/29 18:32:59 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ static void	handle_child(t_command *cmd, int prev_fd, int *fd)
 	if (cmd->parsing_error)
 	{
 		all_free(cmd);
+		cmd->is_free=1;
 		exit(1);
 	}
 	setup_stdin(cmd, prev_fd);
@@ -45,9 +46,24 @@ static void	handle_child(t_command *cmd, int prev_fd, int *fd)
 	}
 	if (is_built(cmd->cmd))
 	{
+
 		execute_built(cmd);
-		all_free(cmd);
-		exit(cmd->last_exit_code);
+		//all_free(cmd);
+		free_data(cmd->tmp);
+		free_two_dimension(cmd->args);
+		clear_tokens(cmd);
+		free_command_list_except_first(cmd);
+		free(cmd->pids);
+		if (cmd->cmd)
+		{
+			free(cmd->cmd);
+			cmd->cmd = NULL;
+		}
+		//all_free(cmd);
+		cmd->is_free=1;
+		int i = cmd->last_exit_code;
+		free(cmd);
+		exit(i);
 	}
 	exec_external_or_exit(cmd);
 }
