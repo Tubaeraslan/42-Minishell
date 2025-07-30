@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/21 16:09:21 by ican              #+#    #+#             */
-/*   Updated: 2025/07/29 17:26:43 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/30 19:21:17 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,11 @@ void	free_data(t_data *tmp)
 	{
 		free_two_dimension(tmp->env);
 		tmp->env = NULL;
+	}
+	if (tmp->export_list)
+	{
+		free_two_dimension(tmp->export_list);
+		tmp->export_list = NULL;
 	}
 	if (tmp->input)
 	{

@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 13:31:17 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/30 17:53:38 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/30 19:21:17 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,11 +41,8 @@ int is_in_list(char **list, char *var)
     {
         if (!list[i])
         {
-            // Bu olmaz ama güvenlik için break
             break;
         }
-        // Debug print:
-        printf("Comparing list[%d] = \"%s\" with var = \"%s\"\n", i, list[i], var);
         
         if (strcmp(list[i], var) == 0)
             return 1;
@@ -69,33 +66,18 @@ void extend_export_list(t_command *command, char *var)
         return;
     }
 
+    // Eski pointer'ları kopyala (string'leri değil!)
     for (int j = 0; j < i; j++)
-    {
-        new_list[j] = ft_strdup(command->tmp->export_list[j]);
-        if (!new_list[j])
-        {
-            while (--j >= 0)
-                free(new_list[j]);
-            free(new_list);
-            free(var);
-            return;
-        }
-    }
+        new_list[j] = command->tmp->export_list[j];
 
-    new_list[i] = var;  // var zaten strdup edilmiş olmalı
+    new_list[i] = var;
     new_list[i + 1] = NULL;
 
+    // Sadece array'i free et, içindekileri değil
     if (command->tmp->export_list)
-    {
-        for (int k = 0; (command->tmp->export_list)[k]; k++)
-            free((command->tmp->export_list)[k]);
         free(command->tmp->export_list);
-    }
-	char ** tmp = new_list;
-    command->tmp->export_list = tmp;
-	free(new_list);
-	free(var);
-	// free_two_dimension(new_list);
+    
+    command->tmp->export_list = new_list;
 }
 
 void update_export(t_command *command, char *var)
