@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/19 12:51:33 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/29 18:32:59 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/30 18:10:26 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ static void	handle_child(t_command *cmd, int prev_fd, int *fd)
 	if (cmd->parsing_error)
 	{
 		all_free(cmd);
-		cmd->is_free=1;
+		//cmd->is_free=1;
 		exit(1);
 	}
 	setup_stdin(cmd, prev_fd);

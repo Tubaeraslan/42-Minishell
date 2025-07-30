@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:17:14 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/29 13:35:56 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/30 17:51:15 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ static int	ft_export_handle_arg(t_command *cmd, char *arg)
 	if (ft_strchr(arg, '='))
 		update_env(&cmd->tmp->env, arg);
 	else
-		update_export(&cmd->export_list, arg);
+		update_export(cmd, ft_strdup(arg));
 	return (0);
 }
 
@@ -75,18 +75,20 @@ void	ft_export(t_command *cmd)
 {
 	int		i;
 	int		error_flag;
+	char **args;
 
 	i = 1;
 	error_flag = 0;
+	args = cmd->args;
 	if (!cmd->args[i])
 	{
-		print_export_list(cmd->tmp->env, cmd->export_list);
+		print_export_list(cmd->tmp->env, cmd->tmp->export_list);
 		cmd->last_exit_code = 0;
 		return ;
 	}
 	while (cmd->args[i])
 	{
-		if (ft_export_handle_arg(cmd, cmd->args[i]))
+		if (ft_export_handle_arg(cmd,args[i]))
 			error_flag = 1;
 		i++;
 	}

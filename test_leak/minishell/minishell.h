@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:04:57 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/29 18:30:18 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/30 16:41:39 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ typedef struct s_data
 {
 	char	*input;
 	char	**env;
+	char	**export_list;
 }	t_data;
 
 typedef struct s_expand
@@ -97,8 +98,9 @@ typedef struct s_command
 	int					last_exit_code;
 	int					parsing_error;
 	int					error_printed;
-	char				**export_list;
 	int is_free;
+	int	in_fd;
+	int	out_fd;
 	t_tokenizer			tokenizer;
 }	t_command;
 
@@ -171,7 +173,7 @@ void		heredoc_loop_custom(char *limiter, int write_fd);
 void		add_heredoc_node(t_heredoc **h, t_heredoc **l, char *input, int *i);
 int			find_in_env(char **env, char *var);
 int			is_in_list(char **list, char *var);
-void		update_export(char ***export_list, char *var);
+void		update_export(t_command *command, char *var);
 int			get_exit_code_from_status(int status);
 void		print_declare_line(char *env);
 char		*ft_strncpy(char *dst, const char *src, size_t len);

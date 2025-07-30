@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:04:40 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/29 19:41:04 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/30 14:12:44 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,9 +36,11 @@ void	init_command(t_command *command, t_data *shell, char **envp)
 	command->last_exit_code = 0;
 	command->parsing_error = 0;
 	command->error_printed = 0;
-	command->export_list = NULL;
+	command->tmp->export_list = NULL;
 	command->is_free = 0;
 	command->pids = NULL;
+	command->in_fd = -1;
+	command->out_fd = -1;
 	ft_bzero(&command->tokenizer, sizeof(t_tokenizer));
 }
 
@@ -80,6 +82,31 @@ static int	read_and_prepare_input(t_command *command)
 	return (0);
 }
 
+void	free_str_list(char **list)
+{
+	int	i;
+
+	if (!list)
+		return;
+	i = 0;
+	while (list[i])
+		free(list[i++]);
+	free(list);
+}
+
+void	free_shell(t_data *shell)
+{
+	if (!shell)
+		return;
+	if (shell->export_list)
+	{
+		free_two_dimension(shell->export_list);
+		shell->export_list = NULL;
+	}
+	// diğer alanlar da serbest bırakılabilir
+	free(shell);
+}
+
 int	main(int argc, char **argv, char **envp)
 {
 	t_data		*shell;
@@ -103,5 +130,8 @@ int	main(int argc, char **argv, char **envp)
 		parse_input(command);
 		execute_commands(command);
 	}
+	//free_str_list(command->export_list);  // export_list senin shell struct'ında tutuluyorsa
+	//free_command_list(command);         // tüm command'leri temizle
+	//free(command->tmp);
 	return (0);
 }

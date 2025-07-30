@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 20:41:22 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/26 12:18:28 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/30 12:45:05 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,9 @@ static int	handle_input_redirection(t_command *cmd)
 
 	if (cmd->is_heredoc)
 	{
+		cmd->in_fd = cmd->heredoc_fd;
 		dup2(cmd->heredoc_fd, STDIN_FILENO);
-		close(cmd->heredoc_fd);
+		//close(cmd->heredoc_fd);
 		return (0);
 	}
 	if (cmd->infile)
@@ -42,8 +43,9 @@ static int	handle_input_redirection(t_command *cmd)
 			perror(cmd->infile);
 			return (-1);
 		}
+		cmd->in_fd = fd;
 		dup2(fd, STDIN_FILENO);
-		close(fd);
+		//close(fd);
 	}
 	return (0);
 }
@@ -63,8 +65,9 @@ static int	handle_output_redirection(t_command *cmd)
 		perror(cmd->outfile);
 		return (-1);
 	}
+	cmd->out_fd = fd;
 	dup2(fd, STDOUT_FILENO);
-	close(fd);
+	//close(fd);
 	return (0);
 }
 

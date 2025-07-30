@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 13:31:17 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/29 13:50:05 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/30 17:53:38 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,60 +28,84 @@ int	find_in_env(char **env, char *var)
 	return (0);
 }
 
-int	is_in_list(char **list, char *var)
+int is_in_list(char **list, char *var)
 {
-	int	i;
+    int i = 0;
 
-	i = 0;
-	while (list && list[i])
-	{
-		if (strcmp(list[i], var) == 0)
-			return (1);
-		i++;
-	}
-	return (0);
+    if (!var)
+        return 0;
+    if (!list)
+        return 0;
+
+    while (list[i])
+    {
+        if (!list[i])
+        {
+            // Bu olmaz ama güvenlik için break
+            break;
+        }
+        // Debug print:
+        printf("Comparing list[%d] = \"%s\" with var = \"%s\"\n", i, list[i], var);
+        
+        if (strcmp(list[i], var) == 0)
+            return 1;
+        i++;
+    }
+    return 0;
 }
 
-static char	**extend_export_list(char **export_list, char *var)
+void extend_export_list(t_command *command, char *var)
 {
-	int		i;
-	char	**new_list;
+    int i = 0;
+    char **new_list;
 
-	i = 0;
-	while (export_list && export_list[i])
-		i++;
-	new_list = malloc(sizeof(char *) * (i + 2));
-	if (!new_list)
-		return (NULL);
-	i = 0;
-	while (export_list && export_list[i])
-	{
-		new_list[i] = strdup(export_list[i]);
-		i++;
-	}
-	new_list[i++] = strdup(var);
-	new_list[i] = NULL;
-	return (new_list);
+    while (command->tmp->export_list && command->tmp->export_list[i])
+        i++;
+
+    new_list = malloc(sizeof(char *) * (i + 2));
+    if (!new_list)
+    {
+        free(var);
+        return;
+    }
+
+    for (int j = 0; j < i; j++)
+    {
+        new_list[j] = ft_strdup(command->tmp->export_list[j]);
+        if (!new_list[j])
+        {
+            while (--j >= 0)
+                free(new_list[j]);
+            free(new_list);
+            free(var);
+            return;
+        }
+    }
+
+    new_list[i] = var;  // var zaten strdup edilmiş olmalı
+    new_list[i + 1] = NULL;
+
+    if (command->tmp->export_list)
+    {
+        for (int k = 0; (command->tmp->export_list)[k]; k++)
+            free((command->tmp->export_list)[k]);
+        free(command->tmp->export_list);
+    }
+	char ** tmp = new_list;
+    command->tmp->export_list = tmp;
+	free(new_list);
+	free(var);
+	// free_two_dimension(new_list);
 }
 
-void	update_export(char ***export_list, char *var)
+void update_export(t_command *command, char *var)
 {
-	char	**new_list;
-	int		j;
-
-	if (is_in_list(*export_list, var))
-		return ;
-	new_list = extend_export_list(*export_list, var);
-	if (!new_list)
-		return ;
-	if (*export_list)
-	{
-		j = 0;
-		while ((*export_list)[j])
-			free((*export_list)[j++]);
-		free(*export_list);
-	}
-	*export_list = new_list;
+    if (is_in_list(command->tmp->export_list, var))
+    {
+        free(var);
+        return;
+    }
+    extend_export_list(command, var);
 }
 
 void	print_declare_line(char *env)

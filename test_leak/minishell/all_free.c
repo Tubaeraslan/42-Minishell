@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 15:07:03 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/29 18:56:41 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/30 13:51:24 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,11 +70,6 @@ static void	free_struct_fields(t_command *cmd)
 	{
 		free_heredocs(cmd->heredocs);
 		cmd->heredocs = NULL;
-	}
-	if (cmd->export_list)
-	{
-		free_two_dimension(cmd->export_list);
-		cmd->export_list = NULL;
 	}
 }
 

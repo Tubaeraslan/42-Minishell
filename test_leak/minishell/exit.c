@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:16:12 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/29 13:55:31 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/30 12:46:22 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,8 +57,32 @@ static int	numeric_control(char *arg)
 	return (0);
 }
 
+void	close_all_fds(t_command *cmd)
+{
+	while (cmd)
+	{
+		if (cmd->in_fd > 2)
+		{
+			close(cmd->in_fd);
+			cmd->in_fd = -1;
+		}
+		if (cmd->out_fd > 2)
+		{
+			close(cmd->out_fd);
+			cmd->out_fd = -1;
+		}
+		if (cmd->heredoc_fd > 2)
+		{
+			close(cmd->heredoc_fd);
+			cmd->heredoc_fd = -1;
+		}
+		cmd = cmd->next;
+	}
+}
+
 static void	exit_program(t_command *cmd, int exit_code)
 {
+	close_all_fds(cmd);
 	if (cmd)
 		all_free(cmd);
 	rl_clear_history();
