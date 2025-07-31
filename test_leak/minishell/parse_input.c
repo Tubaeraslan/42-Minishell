@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:37:12 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/30 18:03:35 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/07/31 18:06:21 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,10 +103,10 @@ void	parse_input(t_command *command)
 		all_free(command);
 		return ;
 	}
+	if (!check_syntax_errors(command))
+		return ;
 	check_heredoc_and_setup(command);
 	if (!check_heredoc_conditions(command))
-		return ;
-	if (!check_syntax_errors(command))
 		return ;
 	expand_variables(command);
 	token(command);
