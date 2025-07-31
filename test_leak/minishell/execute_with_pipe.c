@@ -83,7 +83,11 @@ int	execute_many_token(t_command *command)
 {
 	int	cmd_count;
 	int	exit_code;
+	int	validation_result;
 
+	validation_result = validate_all_commands(command);
+	if (validation_result != 0)
+		return (validation_result);
 	cmd_count = count_commands(command);
 	command->pids = malloc(sizeof(pid_t) * cmd_count);
 	if (!command->pids)
@@ -99,4 +103,29 @@ int	execute_many_token(t_command *command)
 		return (EXIT_FAILURE);
 	else
 		return (exit_code);
+}
+
+int	validate_all_commands(t_command *command)
+{
+	t_command	*current;
+	char		*path;
+
+	current = command;
+	while (current)
+	{
+		if (!is_built(current->cmd))
+		{
+			path = path_finder(current->cmd, current->tmp->env);
+			if (!path)
+			{
+				ft_putstr_fd("command not found: ", 2);
+				ft_putstr_fd(current->cmd, 2);
+				ft_putchar_fd('\n', 2);
+				return (127);
+			}
+			free(path);
+		}
+		current = current->next;
+	}
+	return (0);
 }

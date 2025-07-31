@@ -144,6 +144,7 @@ char		**sort_env(char **env);
 void		free_env(char **env);
 void		update_env(char ***envp, char *arg);
 int			execute_many_token(t_command *command);
+int			validate_all_commands(t_command *command);
 char		*path_finder(char *cmd, char **env);
 void		sigint_handler(int sig);
 int			get_oldpwd(t_command *cmd, char *cwd, size_t c_size, char **oldpwd);
