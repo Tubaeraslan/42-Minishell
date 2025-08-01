@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 13:19:42 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/29 19:03:06 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/08/01 19:21:41 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ static int	parent_heredoc_process(t_command *cmd, int pipe_fd[2], pid_t pid)
 	{
 		if (cmd->heredoc_fd != -1)
 			close(cmd->heredoc_fd);
+		close(pipe_fd[0]);
 		return (0);
 	}
 	if (cmd->heredoc_fd != -1)
@@ -32,12 +33,14 @@ static int	parent_heredoc_process(t_command *cmd, int pipe_fd[2], pid_t pid)
 	return (1);
 }
 
-static void	child_heredoc_process(char *limiter, int pipe_fd[2])
+static void	child_heredoc_process(t_command *cmd, char *limiter, int pipe_fd[2])
 {
 	close(pipe_fd[0]);
+	free_heredoc(cmd);
 	set_signal(0);
 	heredoc_loop_custom(limiter, pipe_fd[1]);
 	close(pipe_fd[1]);
+	all_free(cmd);
 	exit(EXIT_SUCCESS);
 }
 
@@ -58,7 +61,7 @@ static int	fork_and_handle_heredoc(t_command *cmd, char *limiter)
 		exit(EXIT_FAILURE);
 	}
 	if (pid == 0)
-		child_heredoc_process(limiter, pipe_fd);
+		child_heredoc_process(cmd, limiter, pipe_fd);
 	return (parent_heredoc_process(cmd, pipe_fd, pid));
 }
 
@@ -92,6 +95,9 @@ void	process_heredoc_list(t_command *cmd, t_heredoc *heredocs)
 			cmd->heredoc_fd = -1;
 			cmd->is_heredoc = 0;
 			g_signal_status = 130;
+			all_free(cmd);
+			free_heredoc_list(cmd->heredocs);
+			cmd->heredocs = NULL;
 			return ;
 		}
 		tmp = tmp->next;

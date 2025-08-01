@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/25 15:20:14 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/31 18:18:12 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/08/01 15:39:22 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,8 +123,8 @@ void	check_heredoc_and_setup(t_command *command)
 		if (is_heredoc(cmd->tmp->input) && cmd->heredoc_fd == -1)
 		{
 			heredocs = get_all_heredocs(cmd->tmp->input);
+			cmd->heredocs = heredocs;
 			process_heredoc_list(cmd, heredocs);
-			free_heredoc_list(heredocs);
 			if (g_signal_status == 130)
 				return ;
 		}

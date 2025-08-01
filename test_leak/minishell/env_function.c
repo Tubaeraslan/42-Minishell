@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:27:50 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/30 17:54:06 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/08/01 19:06:02 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,6 @@ char	**ft_env_dup(char **envp)
 	char	**env_copy;
 
 	i = 0;
-	env_copy = NULL;
 	while (envp && envp[i])
 		i++;
 	env_copy = malloc(sizeof(char *) * (i + 1));
@@ -81,11 +80,8 @@ char	**ft_env_dup(char **envp)
 		env_copy[i] = ft_strdup(envp[i]);
 		if (!env_copy[i])
 		{
-			while (i > 0)
-			{
+			while (--i > 0)
 				free(env_copy[i - 1]);
-				i--;
-			}
 			free(env_copy);
 			return (NULL);
 		}

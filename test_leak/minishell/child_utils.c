@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/19 12:51:33 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/30 18:10:26 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/08/01 19:04:16 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,14 +27,30 @@ static void	setup_stdout(t_command *cmd, int *fd)
 	}
 }
 
+static void	free_child(t_command *cmd)
+{
+	free_data(cmd->tmp);
+	free_two_dimension(cmd->args);
+	clear_tokens(cmd);
+	free_command_list_except_first(cmd);
+	free(cmd->pids);
+	if (cmd->cmd)
+	{
+		free(cmd->cmd);
+		cmd->cmd = NULL;
+	}
+	cmd->is_free = 1;
+}
+
 static void	handle_child(t_command *cmd, int prev_fd, int *fd)
 {
+	int	i;
+
 	signal(SIGINT, SIG_DFL);
 	signal(SIGQUIT, SIG_DFL);
 	if (cmd->parsing_error)
 	{
 		all_free(cmd);
-		//cmd->is_free=1;
 		exit(1);
 	}
 	setup_stdin(cmd, prev_fd);
@@ -46,22 +62,9 @@ static void	handle_child(t_command *cmd, int prev_fd, int *fd)
 	}
 	if (is_built(cmd->cmd))
 	{
-
 		execute_built(cmd);
-		//all_free(cmd);
-		free_data(cmd->tmp);
-		free_two_dimension(cmd->args);
-		clear_tokens(cmd);
-		free_command_list_except_first(cmd);
-		free(cmd->pids);
-		if (cmd->cmd)
-		{
-			free(cmd->cmd);
-			cmd->cmd = NULL;
-		}
-		//all_free(cmd);
-		cmd->is_free=1;
-		int i = cmd->last_exit_code;
+		free_child(cmd);
+		i = cmd->last_exit_code;
 		free(cmd);
 		exit(i);
 	}

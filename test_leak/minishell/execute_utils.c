@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 20:41:22 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/30 12:45:05 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/08/01 19:15:27 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ static int	handle_input_redirection(t_command *cmd)
 	{
 		cmd->in_fd = cmd->heredoc_fd;
 		dup2(cmd->heredoc_fd, STDIN_FILENO);
-		//close(cmd->heredoc_fd);
+		close(cmd->heredoc_fd);
 		return (0);
 	}
 	if (cmd->infile)
@@ -45,7 +45,7 @@ static int	handle_input_redirection(t_command *cmd)
 		}
 		cmd->in_fd = fd;
 		dup2(fd, STDIN_FILENO);
-		//close(fd);
+		close(fd);
 	}
 	return (0);
 }
@@ -67,7 +67,7 @@ static int	handle_output_redirection(t_command *cmd)
 	}
 	cmd->out_fd = fd;
 	dup2(fd, STDOUT_FILENO);
-	//close(fd);
+	close(fd);
 	return (0);
 }
 
@@ -78,4 +78,31 @@ int	handle_redirections(t_command *cmd)
 	if (handle_output_redirection(cmd) < 0)
 		return (-1);
 	return (0);
+}
+
+void	child_execute_command(t_command *cmd)
+{
+	char	*path;
+
+	if (is_built(cmd->cmd))
+	{
+		execute_built(cmd);
+		all_free(cmd);
+		exit(0);
+	}
+	path = path_finder(cmd->cmd, cmd->tmp->env);
+	if (!path)
+	{
+		ft_putstr_fd("command not found: ", 2);
+		ft_putstr_fd(cmd->cmd, 2);
+		ft_putchar_fd('\n', 2);
+		free(path);
+		all_free(cmd);
+		exit(127);
+	}
+	execve(path, cmd->args, cmd->tmp->env);
+	perror("execve");
+	free(path);
+	all_free(cmd);
+	exit(EXIT_FAILURE);
 }

@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:04:57 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/30 16:41:39 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/08/01 19:33:43 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,6 @@
 # include <fcntl.h>
 # include <errno.h>
 # include <sys/stat.h>
-# include "get_next_line/get_next_line.h"
 
 extern int	g_signal_status;
 
@@ -79,7 +78,7 @@ typedef struct s_tokenizer
 
 typedef struct s_command
 {
-	pid_t   *pids;
+	pid_t				*pids;
 	char				**tokens;
 	int					token_count;
 	char				*cmd;
@@ -98,9 +97,9 @@ typedef struct s_command
 	int					last_exit_code;
 	int					parsing_error;
 	int					error_printed;
-	int is_free;
-	int	in_fd;
-	int	out_fd;
+	int					is_free;
+	int					in_fd;
+	int					out_fd;
 	t_tokenizer			tokenizer;
 }	t_command;
 
@@ -170,6 +169,7 @@ char		*extract_limiter(char *input, int i);
 int			has_any_heredoc(t_command *cmd);
 int			check_heredoc_conditions(t_command *command);
 void		set_signal(int i);
+void		free_heredoc(t_command *command);
 void		heredoc_loop_custom(char *limiter, int write_fd);
 void		add_heredoc_node(t_heredoc **h, t_heredoc **l, char *input, int *i);
 int			find_in_env(char **env, char *var);
@@ -191,4 +191,5 @@ void		free_heredoc_list(t_heredoc *lst);
 void		free_command_list_except_first(t_command *command);
 void		free_redirects(t_redirects *redir);
 void		free_heredocs(t_heredoc *heredoc);
+void	child_execute_command(t_command *cmd);
 #endif

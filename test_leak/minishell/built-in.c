@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:06:18 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/30 12:52:29 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/08/01 18:39:54 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,22 +36,16 @@ void	execute_builtin_with_redir(t_command *command)
 	saved_stdin = dup(STDIN_FILENO);
 	saved_stdout = dup(STDOUT_FILENO);
 	handle_redirections(command);
-
 	if (ft_strncmp(command->cmd, "exit", 5) == 0)
 	{
-		// Exit komutuysa önce redirect'leri temizle
 		dup2(saved_stdin, STDIN_FILENO);
 		dup2(saved_stdout, STDOUT_FILENO);
 		close(saved_stdin);
 		close(saved_stdout);
-
-		// Daha sonra exit'i çağır
 		command->last_exit_code = ft_exit(command);
-		return;
+		return ;
 	}
-
 	execute_built(command);
-
 	dup2(saved_stdin, STDIN_FILENO);
 	dup2(saved_stdout, STDOUT_FILENO);
 	close(saved_stdin);

@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:37:12 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/31 18:06:21 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/08/01 13:07:48 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,6 @@ void	parse_input(t_command *command)
 	{
 		ft_putstr_fd("minishell: command not found\n", STDERR_FILENO);
 		command->last_exit_code = 127;
-		all_free(command);
 		return ;
 	}
 	if (!check_syntax_errors(command))

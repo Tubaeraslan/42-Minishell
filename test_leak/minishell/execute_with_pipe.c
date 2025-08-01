@@ -6,38 +6,11 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:36:30 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/30 18:08:56 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/08/01 19:15:23 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-void	child_execute_command(t_command *cmd)
-{
-	char	*path;
-
-	if (is_built(cmd->cmd))
-	{
-		execute_built(cmd);
-		all_free(cmd);
-		exit(0);
-	}
-	path = path_finder(cmd->cmd, cmd->tmp->env);
-	if (!path)
-	{
-		ft_putstr_fd("command not found: ", 2);
-		ft_putstr_fd(cmd->cmd, 2);
-		ft_putchar_fd('\n', 2);
-		free(path);
-		all_free(cmd);
-		exit(127);
-	}
-	execve(path, cmd->args, cmd->tmp->env);
-	perror("execve");
-	free(path);
-	all_free(cmd);
-	exit(EXIT_FAILURE);
-}
 
 static void	execute_commands_pipe(char *path, t_command *cmd)
 {
@@ -98,7 +71,6 @@ int	execute_many_token(t_command *command)
 	exit_code = execute_pipeline(command, command->pids);
 	free(command->pids);
 	command->pids = NULL;
-
 	if (exit_code == -1)
 		return (EXIT_FAILURE);
 	else

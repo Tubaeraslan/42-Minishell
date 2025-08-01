@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/21 16:09:21 by ican              #+#    #+#             */
-/*   Updated: 2025/07/30 19:21:17 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/08/01 14:36:29 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,6 +96,11 @@ void	clear_command_data(t_command *cmd)
 	{
 		free(cmd->heredoc_limiter);
 		cmd->heredoc_limiter = NULL;
+	}
+	if (cmd->heredocs)
+	{
+		free_heredocs(cmd->heredocs);
+		cmd->heredocs = NULL;
 	}
 	cmd->is_pipe = 0;
 	cmd->is_append = 0;

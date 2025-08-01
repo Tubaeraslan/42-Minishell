@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 20:11:17 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/19 13:25:29 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/08/01 19:25:03 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,8 @@ void	clear_tokens(t_command *command)
 		command->tokens[i] = NULL;
 		i++;
 	}
-	free(command->tokens);
+	if (command->tokens)
+		free(command->tokens);
 	command->tokens = NULL;
 	command->token_count = 0;
 }

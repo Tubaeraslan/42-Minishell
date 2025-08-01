@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/25 15:26:56 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/30 18:19:21 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/08/01 18:41:07 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,6 @@ char	*get_command_path(t_command *cmd)
 			ft_putstr_fd("command not found: ", 2);
 			ft_putstr_fd(cmd->cmd, 2);
 			ft_putchar_fd('\n', 2);
-			free(path);
 			all_free(cmd);
 			exit(127);
 		}

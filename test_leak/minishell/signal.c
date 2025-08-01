@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:07:21 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/29 13:29:31 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/08/01 19:32:10 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,19 +30,28 @@ void	handle_signals(void)
 
 void	child_signal_handler2(int sig)
 {
+	int	fd;
+
 	if (sig == SIGINT)
 	{
 		g_signal_status = 130;
+		for (fd = 3; fd < 1024; fd++)
+			close(fd);
 		signal(SIGINT, SIG_IGN);
 	}
 }
 
 void	child_signal_handler(int sig)
 {
+	int	fd;
+
 	if (sig == SIGINT)
 	{
 		g_signal_status = 130;
-		printf("\n");
+		write(1, "\n", 1);
+		for (fd = 3; fd < 1024; fd++)
+			close(fd);
+		free_heredoc(NULL);
 		exit(g_signal_status);
 	}
 }

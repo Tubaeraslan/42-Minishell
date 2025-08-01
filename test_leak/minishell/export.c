@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:17:14 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/30 17:51:15 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/08/01 19:13:26 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ void	ft_export(t_command *cmd)
 {
 	int		i;
 	int		error_flag;
-	char **args;
+	char	**args;
 
 	i = 1;
 	error_flag = 0;
@@ -88,7 +88,7 @@ void	ft_export(t_command *cmd)
 	}
 	while (cmd->args[i])
 	{
-		if (ft_export_handle_arg(cmd,args[i]))
+		if (ft_export_handle_arg(cmd, args[i]))
 			error_flag = 1;
 		i++;
 	}
