@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:04:57 by teraslan          #+#    #+#             */
-/*   Updated: 2025/08/01 19:33:43 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/08/02 12:22:22 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -191,5 +191,6 @@ void		free_heredoc_list(t_heredoc *lst);
 void		free_command_list_except_first(t_command *command);
 void		free_redirects(t_redirects *redir);
 void		free_heredocs(t_heredoc *heredoc);
-void	child_execute_command(t_command *cmd);
+void		child_execute_command(t_command *cmd);
+void		free_heredoc_internal(t_command *stored_command);
 #endif

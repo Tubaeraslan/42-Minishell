@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 15:03:05 by teraslan          #+#    #+#             */
-/*   Updated: 2025/08/01 19:36:22 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/08/02 12:21:15 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,18 +22,11 @@ static void	close_fds(t_command *cmd)
 		close(cmd->out_fd);
 }
 
-void	free_heredoc(t_command *command)
+void	free_heredoc_internal(t_command *stored_command)
 {
-	static t_command	*stored_command;
-	t_heredoc			*tmp_heredoc;
-	int					fd;
+	t_heredoc	*tmp_heredoc;
+	int			fd;
 
-	stored_command = NULL;
-	if (command)
-	{
-		stored_command = command;
-		return ;
-	}
 	if (!stored_command)
 		return ;
 	fd = 3;

@@ -6,11 +6,24 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 20:42:34 by teraslan          #+#    #+#             */
-/*   Updated: 2025/08/01 19:16:17 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/08/02 12:21:21 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+void	free_heredoc(t_command *command)
+{
+	static t_command	*stored_command;
+
+	if (command)
+	{
+		stored_command = command;
+		return ;
+	}
+	free_heredoc_internal(stored_command);
+	stored_command = NULL;
+}
 
 void	execute_child_process(t_command *command)
 {
