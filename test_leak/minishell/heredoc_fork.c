@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 13:19:42 by teraslan          #+#    #+#             */
-/*   Updated: 2025/08/02 13:21:56 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/08/02 17:14:40 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ static void	child_heredoc_process(t_command *cmd, char *limiter, int pipe_fd[2])
 	set_signal(0);
 	heredoc_loop_custom(limiter, pipe_fd[1]);
 	close(pipe_fd[1]);
-	all_free(cmd);
+	free_command_chain(cmd);
 	exit(EXIT_SUCCESS);
 }
 
@@ -107,7 +107,7 @@ void	process_heredoc_list(t_command *cmd, t_heredoc *heredocs)
 			cmd->heredoc_fd = -1;
 			cmd->is_heredoc = 0;
 			g_signal_status = 130;
-			all_free(cmd);
+			free_command_chain(cmd);
 			free_heredoc_list(cmd->heredocs);
 			cmd->heredocs = NULL;
 			return ;

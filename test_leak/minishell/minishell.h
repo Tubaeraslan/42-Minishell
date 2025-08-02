@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ican <<ican@student.42.fr>>                +#+  +:+       +#+        */
+/*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:04:57 by teraslan          #+#    #+#             */
-/*   Updated: 2025/08/02 14:32:44 by ican             ###   ########.fr       */
+/*   Updated: 2025/08/02 17:14:40 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -180,6 +180,7 @@ void		print_declare_line(char *env);
 char		*ft_strncpy(char *dst, const char *src, size_t len);
 void		free_two_dimension(char **arg);
 void		all_free(t_command *cmd);
+void		free_command_chain(t_command *cmd);
 void		clear_command_data(t_command *cmd);
 void		check_executable(char *path, struct stat *st, t_command *cmd);
 void		exec_command(t_command *command, char *path);

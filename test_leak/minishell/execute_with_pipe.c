@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:36:30 by teraslan          #+#    #+#             */
-/*   Updated: 2025/08/01 19:15:23 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/08/02 17:14:36 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ static void	execute_commands_pipe(char *path, t_command *cmd)
 	execve(path, cmd->args, cmd->tmp->env);
 	perror("execve");
 	free(path);
-	all_free(cmd);
+	free_command_chain(cmd);
 	exit(126);
 }
 

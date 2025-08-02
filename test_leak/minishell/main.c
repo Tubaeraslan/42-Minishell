@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:04:40 by teraslan          #+#    #+#             */
-/*   Updated: 2025/08/01 19:30:27 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/08/02 17:57:24 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,6 @@ static int	read_and_prepare_input(t_command *command)
 	if (!input)
 	{
 		printf("exit\n");
-		all_free(command);
 		return (1);
 	}
 	add_history(input);
@@ -109,5 +108,6 @@ int	main(int argc, char **argv, char **envp)
 		parse_input(command);
 		execute_commands(command);
 	}
+	free_command_chain(command);
 	return (0);
 }
