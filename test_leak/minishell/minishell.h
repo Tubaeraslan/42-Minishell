@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ican <<ican@student.42.fr>>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:04:57 by teraslan          #+#    #+#             */
-/*   Updated: 2025/08/02 12:22:22 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/08/02 14:32:44 by ican             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -193,4 +193,8 @@ void		free_redirects(t_redirects *redir);
 void		free_heredocs(t_heredoc *heredoc);
 void		child_execute_command(t_command *cmd);
 void		free_heredoc_internal(t_command *stored_command);
+void		exit_control(t_command	*cmd);
+void		exit_control2(t_command	*cmd);
+int			numeric_control(char *arg);
+void	exit_program(t_command *cmd, int exit_code);
 #endif

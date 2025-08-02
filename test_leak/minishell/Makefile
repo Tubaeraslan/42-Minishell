@@ -12,7 +12,7 @@ SRC = main.c signal.c env_function.c parse_input.c pipe_syntax.c syntax_check.c 
 		execute_with_pipe.c all_free_st.c cd_utils.c child_utils.c parse_function.c \
 		stdin_utils.c heredoc_utils.c check_pipe_path.c expand_utils.c path.c \
 		parse_conditions.c heredoc_read_input.c heredoc_fork.c export_utils.c \
-		free_execute.c all_free.c
+		free_execute.c all_free.c exit_utils.c
 OBJ = $(SRC:.c=.o)
 
 all:$(LIBFT) $(NAME)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ican <<ican@student.42.fr>>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:16:12 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/30 12:46:22 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/08/02 14:32:38 by ican             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ int	get_exit_code_from_status(int status)
 	return (0);
 }
 
-static int	numeric_control(char *arg)
+int	numeric_control(char *arg)
 {
 	int	i;
 
@@ -80,7 +80,7 @@ void	close_all_fds(t_command *cmd)
 	}
 }
 
-static void	exit_program(t_command *cmd, int exit_code)
+void	exit_program(t_command *cmd, int exit_code)
 {
 	close_all_fds(cmd);
 	if (cmd)
@@ -94,18 +94,14 @@ int	ft_exit(t_command *cmd)
 	long	exit_code;
 
 	write(2, "exit\n", 5);
+	exit_control(cmd);
 	if (cmd->args[1] && cmd->args[2])
 	{
 		ft_putstr_fd("minishell: exit: too many arguments\n", 2);
 		return (1);
 	}
 	if (cmd->args[1] && numeric_control(cmd->args[1]) == 1)
-	{
-		ft_putstr_fd("minishell: exit: ", 2);
-		ft_putstr_fd(cmd->args[1], 2);
-		ft_putstr_fd(": numeric argument required\n", 2);
-		exit_program(cmd, 2);
-	}
+		exit_control(cmd);
 	if (cmd->args[1])
 	{
 		exit_code = ft_atoi(cmd->args[1]);
