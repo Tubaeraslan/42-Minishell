@@ -6,7 +6,7 @@
 /*   By: ican <<ican@student.42.fr>>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:16:12 by teraslan          #+#    #+#             */
-/*   Updated: 2025/08/02 14:32:38 by ican             ###   ########.fr       */
+/*   Updated: 2025/08/02 20:42:01 by ican             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,7 @@ int	ft_exit(t_command *cmd)
 		return (1);
 	}
 	if (cmd->args[1] && numeric_control(cmd->args[1]) == 1)
-		exit_control(cmd);
+		exit_control2(cmd);
 	if (cmd->args[1])
 	{
 		exit_code = ft_atoi(cmd->args[1]);
