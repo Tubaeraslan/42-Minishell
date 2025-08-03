@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ican <<ican@student.42.fr>>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:04:40 by teraslan          #+#    #+#             */
-/*   Updated: 2025/08/02 17:57:24 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/08/03 20:07:44 by ican             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,21 +61,29 @@ static void	init_pointer(t_command **command, t_data **shell)
 static int	read_and_prepare_input(t_command *command)
 {
 	char	*input;
+	char	*tmp;
 
 	input = readline("minishell$ ");
 	if (!input)
 	{
+		free_command_chain(command);
 		printf("exit\n");
+		exit (-1);
+	}
+	if (input[0] == '\0')
+	{
 		return (1);
 	}
-	add_history(input);
+	tmp = ft_strtrim(input, " ");
+	add_history(tmp);
 	if (command->tmp->input)
 	{
 		free(command->tmp->input);
 		command->tmp->input = NULL;
 	}
-	command->tmp->input = ft_strdup(input);
+	command->tmp->input = ft_strdup(tmp);
 	free(input);
+	free(tmp);
 	if (!command->tmp->input)
 	{
 		perror("ft_strdup");
@@ -99,7 +107,7 @@ int	main(int argc, char **argv, char **envp)
 	{
 		g_signal_status = 0;
 		if (read_and_prepare_input(command))
-			break ;
+			continue;
 		if (g_signal_status != 0)
 		{
 			command->last_exit_code = g_signal_status;

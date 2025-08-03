@@ -6,7 +6,7 @@
 /*   By: ican <<ican@student.42.fr>>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 20:26:09 by teraslan          #+#    #+#             */
-/*   Updated: 2025/08/03 15:21:28 by ican             ###   ########.fr       */
+/*   Updated: 2025/08/03 19:42:38 by ican             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,8 +120,9 @@ void	update_args_and_cmd(t_command *command, char **args, int count)
 		free(command->cmd);
 		command->cmd = NULL;
 	}
+	//printf("Command: %s\n", args[0]);
 	if (count > 0 && args && args[0])
-		command->cmd = ft_strdup(args[0]);
+		command->cmd = ft_strdup(command->args[0]);
 	else
 		command->cmd = NULL;
 }
