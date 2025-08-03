@@ -6,7 +6,7 @@
 /*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/19 12:51:33 by teraslan          #+#    #+#             */
-/*   Updated: 2025/08/02 17:54:59 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/08/03 13:25:25 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,8 +48,8 @@ static void	handle_child(t_command *cmd, int prev_fd, int *fd)
 	if (is_built(cmd->cmd))
 	{
 		execute_built(cmd);
-		free_command_chain(cmd);
 		i = cmd->last_exit_code;
+		free_command_chain(cmd);
 		exit(i);
 	}
 	exec_external_or_exit(cmd);

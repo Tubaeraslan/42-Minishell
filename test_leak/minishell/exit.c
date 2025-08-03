@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ican <<ican@student.42.fr>>                +#+  +:+       +#+        */
+/*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:16:12 by teraslan          #+#    #+#             */
-/*   Updated: 2025/08/02 20:42:01 by ican             ###   ########.fr       */
+/*   Updated: 2025/08/03 12:45:27 by teraslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,7 @@ int	ft_exit(t_command *cmd)
 	if (cmd->args[1] && cmd->args[2])
 	{
 		ft_putstr_fd("minishell: exit: too many arguments\n", 2);
-		return (1);
+		return (127);
 	}
 	if (cmd->args[1] && numeric_control(cmd->args[1]) == 1)
 		exit_control2(cmd);
