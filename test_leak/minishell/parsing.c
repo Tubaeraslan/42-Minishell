@@ -6,7 +6,7 @@
 /*   By: ican <<ican@student.42.fr>>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 20:19:32 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/27 17:11:22 by ican             ###   ########.fr       */
+/*   Updated: 2025/08/03 15:07:51 by ican             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,6 +87,7 @@ void	parsing(t_command *command)
 
 	i = 0;
 	count = 0;
+	result = 0;
 	clear_command_data(command);
 	tmp_args = alloc_args(command->token_count);
 	if (!tmp_args)
@@ -103,5 +104,10 @@ void	parsing(t_command *command)
 			break ;
 	}
 	tmp_args[count] = NULL;
+	if (result == -1)
+	{
+		free_two_dimension(tmp_args);
+		return ;
+	}
 	update_args_and_cmd(command, tmp_args, count);
 }

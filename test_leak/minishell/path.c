@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   path.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teraslan <teraslan@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ican <<ican@student.42.fr>>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/25 17:07:05 by teraslan          #+#    #+#             */
-/*   Updated: 2025/07/25 17:12:18 by teraslan         ###   ########.fr       */
+/*   Updated: 2025/08/03 14:36:25 by ican             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,9 @@ char	*path_finder(char *cmd, char **env)
 	char	**paths;
 	char	*path;
 
+
+	if (!cmd || !*cmd)
+		return (NULL);
 	if (ft_strchr(cmd, '/') != NULL)
 	{
 		if (access(cmd, X_OK) == 0)
